@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wilderness EM Quiz</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f172a; --card: #1e293b; --card2: #263348;
+      --accent: #14b8a6; --accent2: #0ea5e9;
+      --correct: #22c55e; --wrong: #ef4444; --warn: #f59e0b;
+      --text: #f1f5f9; --sub: #94a3b8; --border: #334155;
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    header { background: linear-gradient(135deg, #0f172a 0%, #1a2744 100%); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; }
+    header h1 { font-size: 1.25rem; font-weight: 700; }
+    header p  { font-size: 0.8rem; color: var(--sub); }
+    .logo { font-size: 2rem; }
+    #home { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+    .home-intro { text-align: center; margin-bottom: 2.5rem; }
+    .home-intro h2 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .home-intro p  { color: var(--sub); font-size: 1rem; }
+    .quiz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; }
+    .quiz-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; cursor: pointer; transition: all .2s; position: relative; overflow: hidden; }
+    .quiz-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent-color, var(--accent)); }
+    .quiz-card:hover { transform: translateY(-3px); border-color: var(--accent-color, var(--accent)); box-shadow: 0 8px 32px rgba(0,0,0,.4); }
+    .quiz-card .card-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .quiz-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .quiz-card p  { font-size: 0.85rem; color: var(--sub); line-height: 1.5; }
+    .quiz-card .card-meta { margin-top: 1rem; display: flex; gap: 0.75rem; }
+    .badge { font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 999px; background: rgba(255,255,255,.07); color: var(--sub); font-weight: 600; }
+    .badge.done { background: rgba(34,197,94,.15); color: var(--correct); }
+    #quiz { display: none; padding: 1.5rem; max-width: 800px; margin: 0 auto; }
+    .quiz-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .btn-back { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-size: 0.85rem; transition: background .15s; }
+    .btn-back:hover { background: var(--card2); }
+    .progress-bar-wrap { flex: 1; background: var(--card); border-radius: 999px; height: 8px; overflow: hidden; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 999px; transition: width .4s ease; }
+    .q-counter { font-size: 0.85rem; color: var(--sub); white-space: nowrap; }
+    .q-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .q-img-wrap { width: 100%; height: 280px; background: #111827; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+    .q-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .img-fallback { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; color: var(--sub); font-size: 0.9rem; text-align: center; padding: 1rem; }
+    .img-fallback .fb-icon { font-size: 4rem; }
+    .img-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,.8)); padding: 2rem 1rem 0.75rem; font-size: 0.75rem; color: rgba(255,255,255,.6); font-style: italic; }
+    .q-body { padding: 1.5rem; }
+    .q-scenario { font-size: 0.78rem; color: var(--warn); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 0.5rem; }
+    .q-text { font-size: 1.05rem; line-height: 1.6; margin-bottom: 1.5rem; }
+    .choices { display: flex; flex-direction: column; gap: 0.75rem; }
+    .choice-btn { background: var(--card2); border: 1.5px solid var(--border); color: var(--text); padding: 0.85rem 1.1rem; border-radius: 10px; cursor: pointer; text-align: left; font-size: 0.9rem; line-height: 1.4; transition: all .15s; display: flex; gap: 0.75rem; align-items: flex-start; }
+    .choice-btn .opt-letter { width: 24px; height: 24px; min-width: 24px; border-radius: 50%; background: rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+    .choice-btn:not(.locked):hover { border-color: var(--accent); background: rgba(20,184,166,.1); }
+    .choice-btn.correct { border-color: var(--correct); background: rgba(34,197,94,.12); }
+    .choice-btn.correct .opt-letter { background: var(--correct); color: #000; }
+    .choice-btn.wrong { border-color: var(--wrong); background: rgba(239,68,68,.12); }
+    .choice-btn.wrong .opt-letter { background: var(--wrong); color: #fff; }
+    .choice-btn.locked { cursor: default; }
+    .explanation { margin-top: 1.25rem; background: rgba(14,165,233,.08); border: 1px solid rgba(14,165,233,.25); border-radius: 10px; padding: 1rem 1.25rem; font-size: 0.88rem; line-height: 1.6; color: #cbd5e1; }
+    .explanation strong { color: var(--accent2); }
+    .explanation em { color: #e2e8f0; font-style: italic; }
+    .explanation.correct-exp { border-color: rgba(34,197,94,.3); background: rgba(34,197,94,.06); }
+    .explanation.wrong-exp   { border-color: rgba(239,68,68,.3);  background: rgba(239,68,68,.06); }
+    .exp-source { margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px solid rgba(255,255,255,.08); font-size: 0.75rem; color: var(--sub); font-style: italic; line-height: 1.5; }
+    .btn-next { margin-top: 1.25rem; width: 100%; padding: 0.9rem; border: none; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity .15s; }
+    .btn-next:hover { opacity: .88; }
+    #results { display: none; padding: 2rem; max-width: 720px; margin: 0 auto; }
+    .results-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; text-align: center; }
+    .score-ring { width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 6px solid var(--accent); background: rgba(20,184,166,.08); }
+    .score-ring .score-num { font-size: 2.5rem; font-weight: 800; }
+    .score-ring .score-den { font-size: 0.9rem; color: var(--sub); }
+    .score-label { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .score-sub   { color: var(--sub); margin-bottom: 2rem; font-size: 0.9rem; }
+    .review-list { text-align: left; margin-top: 1.5rem; }
+    .review-item { border-radius: 10px; border: 1px solid var(--border); padding: 1rem; margin-bottom: 0.75rem; font-size: 0.85rem; }
+    .review-item.r-correct { border-color: rgba(34,197,94,.4); background: rgba(34,197,94,.05); }
+    .review-item.r-wrong   { border-color: rgba(239,68,68,.4);  background: rgba(239,68,68,.05); }
+    .review-item .r-q { margin-bottom: 0.4rem; color: #cbd5e1; }
+    .review-item .r-ans { font-weight: 600; }
+    .review-item .r-ans.correct { color: var(--correct); }
+    .review-item .r-ans.wrong   { color: var(--wrong); }
+    .results-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
+    .btn-outline { padding: 0.7rem 1.5rem; border: 1.5px solid var(--border); background: transparent; color: var(--text); border-radius: 10px; cursor: pointer; font-size: 0.9rem; transition: all .15s; }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-primary { padding: 0.7rem 1.5rem; border: none; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; transition: opacity .15s; }
+    .btn-primary:hover { opacity: .88; }
+    @media (max-width: 600px) { #home, #quiz { padding: 1rem; } .q-img-wrap { height: 200px; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🏕️</div>
+  <div>
+    <h1>Wilderness EM Quiz</h1>
+    <p>Emergency Medicine Simulation — Toxicology &amp; Envenomations</p>
+  </div>
+</header>
+
+<div id="home">
+  <div class="home-intro">
+    <h2>Choose a Quiz Module</h2>
+    <p>5 modules · 8 questions each · evidence-based explanations</p>
+  </div>
+  <div class="quiz-grid" id="quizGrid"></div>
+</div>
+
+<div id="quiz">
+  <div class="quiz-header">
+    <button class="btn-back" onclick="goHome()">← Back</button>
+    <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+    <span class="q-counter" id="qCounter">1 / 8</span>
+  </div>
+  <div class="q-card">
+    <div class="q-img-wrap" id="imgWrap"></div>
+    <div class="q-body">
+      <div class="q-scenario" id="qScenario"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="choices" id="choices"></div>
+      <div id="explanation" style="display:none"></div>
+      <button class="btn-next" id="btnNext" style="display:none" onclick="nextQuestion()">Next Question →</button>
+    </div>
+  </div>
+</div>
+
+<div id="results">
+  <div class="results-card">
+    <div class="score-ring" id="scoreRing">
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-den" id="scoreDen">/ 8</div>
+    </div>
+    <div class="score-label" id="scoreLabel">—</div>
+    <div class="score-sub"  id="scoreSub">—</div>
+    <div class="review-list" id="reviewList"></div>
+    <div class="results-actions">
+      <button class="btn-outline" onclick="retryQuiz()">↺ Retry Quiz</button>
+      <button class="btn-primary" onclick="goHome()">All Modules →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const QUIZZES = [
+
+  // ══════════════════════════════════════════
+  // QUIZ 1 — TOXIDROMES & POISONINGS
+  // Level: PGY1–3 · Classic presentations · Core management
+  // ══════════════════════════════════════════
+  {
+    id: 'toxidromes', title: 'Toxidromes & Poisonings', icon: '☠️', color: '#f43f5e',
+    description: 'Recognize toxic syndromes and make the right first management decision',
+    questions: [
+      {
+        img: 'https://images.pexels.com/photos/2286921/pexels-photo-2286921.jpeg?auto=compress&cs=tinysrgb&w=800',
+        imgFallback: '🌾', imgLabel: 'Pesticide spraying on crops — organophosphates are common agricultural insecticides causing mass poisonings',
+        scenario: 'Field stabilization — pesticide exposure',
+        text: 'A farm worker is found collapsed in a pesticide shed. He is bradycardic (HR 42), has pinpoint pupils, copious secretions dripping from his mouth, audible wheeze, and has vomited twice. Which treatment is the most immediately life-saving?',
+        choices: [
+          'Pralidoxime (2-PAM) 1 g IV — reactivate acetylcholinesterase before it ages',
+          'Atropine 2–4 mg IV, repeated until secretions dry and bronchospasm clears',
+          'Activated charcoal via NG tube — prevent further GI absorption',
+          'Diazepam 5 mg IV — prevent seizures from nicotinic overstimulation'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Atropine is the primary life-saving antidote — titrate to secretions, not heart rate</div>
+Organophosphates inhibit acetylcholinesterase, causing excess acetylcholine at muscarinic receptors. The immediate threat is <strong>bronchospasm and bronchorrhea</strong>. Atropine blocks muscarinic receptors and must be given in large, repeated doses until secretions dry — not until heart rate normalizes. Pralidoxime (2-PAM) is important to co-administer to prevent irreversible enzyme "aging," but atropine saves lives first. The classic mnemonic for muscarinic symptoms is SLUDGE (Salivation, Lacrimation, Urination, Defecation, GI distress, Emesis) — though memorizing the antidote principle matters more than the acronym.
+<div class="exp-source">Eddleston M, et al. Lancet. 2008;371(9612):597–607. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 113. WHO Acute Poisoning Management Guidelines, 2008.</div>`
+      },
+      {
+        img: 'https://images.pexels.com/photos/3683047/pexels-photo-3683047.jpeg?auto=compress&cs=tinysrgb&w=800',
+        imgFallback: '💊', imgLabel: 'Transdermal fentanyl patch — continuous opioid delivery outlasts naloxone\'s 30–90 min duration',
+        scenario: 'Wilderness rescue — re-sedation after naloxone',
+        text: 'A hiker found unresponsive (RR 4, pinpoint pupils, fentanyl patch visible on chest) responds well to naloxone 0.4 mg IM — he wakes and is speaking. Forty minutes later he becomes unresponsive again. What is the best explanation?',
+        choices: [
+          'He co-ingested a second drug — obtain urine drug screen before re-dosing',
+          'Naloxone (duration 30–90 min) wore off before fentanyl absorption from the patch ended; re-dose or give an infusion',
+          'Naloxone causes rebound sedation with repeat exposure',
+          'He has aspirated; airway management takes priority over repeat naloxone'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Naloxone is shorter-acting than most opioids — re-dosing is expected</div>
+Naloxone has a half-life of approximately 60–90 minutes, which is <em>shorter</em> than fentanyl from a transdermal patch (which continues absorbing after removal). Re-sedation is the rule, not the exception. Treatment: <strong>repeat naloxone boluses</strong> or a naloxone infusion (two-thirds of the effective reversal dose per hour). Do not assume co-ingestion or aspiration until re-dosing has been tried. Always monitor patients for at least 4–6 hours after any opioid reversal.
+<div class="exp-source">Boyer EW. N Engl J Med. 2012;367(2):146–155. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 38. Auerbach's Wilderness Medicine, 7th ed., Ch. 64.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Datura_stramonium_3.jpg?width=640',
+        imgFallback: '🌸', imgLabel: 'Datura stramonium (jimsonweed) — source of anticholinergic alkaloids',
+        scenario: 'Music festival — altered young patient',
+        text: 'A 17-year-old is found wandering at an outdoor festival: HR 148, T 38.8°C, skin flushed and completely dry, pupils 9 mm, urinary retention, and mumbling about bugs on the wall. His friends say he was "eating flower seeds." Which toxidrome matches this presentation?',
+        choices: [
+          'Opioid toxidrome — pinpoint pupils and sedation are classic',
+          'Anticholinergic toxidrome — dry/flushed skin, mydriasis, tachycardia, urinary retention, hallucinations',
+          'Sympathomimetic toxidrome (cocaine/methamphetamine)',
+          'Serotonin syndrome — fever, agitation, and hallucinations'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Anticholinergic toxidrome: "Hot as a hare, dry as a bone, red as a beet, blind as a bat, mad as a hatter"</div>
+The classic anticholinergic picture combines <strong>tachycardia, hyperthermia, flushed dry skin, mydriasis, urinary retention, ileus, and delirium/hallucinations</strong>. Jimsonweed (Datura stramonium) seeds contain the tropane alkaloids atropine, scopolamine, and hyoscyamine. Opioids cause miosis (not mydriasis) and bradypnea. Sympathomimetics cause diaphoresis (sweat glands are cholinergic), distinguishing them from anticholinergics. Management: cooling, benzodiazepines for agitation; physostigmine can be used by experienced providers.
+<div class="exp-source">Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 65. Tintinalli's Emergency Medicine, 9th ed., Ch. 184.</div>`
+      },
+      {
+        img: 'https://images.pexels.com/photos/593451/pexels-photo-593451.jpeg?auto=compress&cs=tinysrgb&w=800',
+        imgFallback: '💊', imgLabel: 'Sertraline (SSRI) tablets — serotonergic drug interaction risk',
+        scenario: 'ED transfer — fever and involuntary movements after new antibiotic',
+        text: 'A 48-year-old on sertraline 100 mg daily is started on linezolid for MRSA cellulitis. Two days later she develops fever (38.9°C), agitation, diarrhea, and rhythmic involuntary jerking of both ankles when you dorsiflex her feet. What is the most likely diagnosis?',
+        choices: [
+          'Neuroleptic malignant syndrome — linezolid is a dopamine antagonist',
+          'Serotonin syndrome — linezolid is a weak MAO inhibitor, causing serotonin excess with the SSRI',
+          'Meningitis — lumbar puncture is the next step',
+          'Antibiotic-associated colitis — diarrhea and fever are the clues'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Linezolid is a monoamine oxidase inhibitor — combining it with SSRIs causes serotonin syndrome</div>
+Linezolid inhibits monoamine oxidase (MAO), increasing synaptic serotonin. Combined with any serotonergic drug (SSRIs, SNRIs, tramadol, fentanyl, triptans), it can precipitate <strong>serotonin syndrome</strong>. The key finding here is <em>clonus</em> — inducible or spontaneous rhythmic muscle jerking, especially at the ankles — which is the most specific feature distinguishing serotonin toxicity from NMS. Rapid onset (hours vs. days for NMS) also points to serotonin syndrome. Treatment: stop both drugs, benzodiazepines, cyproheptadine.
+<div class="exp-source">Boyer EW, Shannon M. N Engl J Med. 2005;352(11):1112–1120. Dunkley EJC, et al. QJM. 2003;96(9):635–642.</div>`
+      },
+      {
+        img: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&q=80&fit=crop',
+        imgFallback: '⛺', imgLabel: 'Tent camping — enclosed space CO poisoning risk',
+        scenario: 'Winter camping — group found unconscious',
+        text: 'Four campers are found unconscious in a sealed tent with a propane heater that ran all night. Your pulse oximeter reads 97–99% on all four victims. Why is this reading unreliable, and what should you do?',
+        choices: [
+          'Cold fingers cause falsely low readings — warm the extremities and recheck',
+          'Pulse oximetry cannot distinguish carboxyhemoglobin from oxyhemoglobin — readings are falsely normal; treat empirically for CO poisoning',
+          'A reading ≥97% rules out significant CO poisoning — look for another diagnosis',
+          'Pulse ox is unreliable only in patients with dark skin pigmentation'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Standard pulse oximetry is blind to carbon monoxide — it reads SpO2 as falsely normal</div>
+Carboxyhemoglobin (COHb) absorbs light at the same 660 nm wavelength as oxyhemoglobin. A standard two-wavelength pulse oximeter <em>cannot distinguish them</em>, so it reports deceptively normal saturations even in severe poisoning. Only <strong>co-oximetry</strong> (blood gas analyzer) or a specialized CO-oximeter measures true COHb. In any enclosed-space exposure, treat clinically: 100% O₂ via non-rebreather mask, rapid evacuation, consider hyperbaric oxygen for severe cases (coma, cardiac involvement, pregnancy).
+<div class="exp-source">Hampson NB, et al. Ann Emerg Med. 2012;60(4):397–408. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 125.</div>`
+      },
+      {
+        img: 'https://images.pexels.com/photos/263402/pexels-photo-263402.jpeg?auto=compress&cs=tinysrgb&w=800',
+        imgFallback: '🚑', imgLabel: 'Emergency medical response — sympathomimetic toxidrome causes severe agitation, hypertension, and hyperthermia',
+        scenario: 'Outdoor concert — agitated combative patient',
+        text: 'A 26-year-old is brought from a festival: HR 164, BP 198/116, T 38.5°C, diaphoretic, pupils dilated, extremely agitated and combative. Friends confirm stimulant use. Which is the most appropriate first treatment for his agitation and hemodynamic abnormalities?',
+        choices: [
+          'Haloperidol IM — standard antipsychotic for behavioral agitation',
+          'Propranolol IV — lower the heart rate and blood pressure',
+          'Lorazepam 2–4 mg IV — benzodiazepines treat the underlying sympathomimetic excess',
+          'Physical restraints and observation while vital signs are monitored'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Benzodiazepines are first-line — they treat the toxidrome, not just the behavior</div>
+In sympathomimetic toxidrome (cocaine, methamphetamine, MDMA), tachycardia, hypertension, and hyperthermia are all driven by excess catecholamine activity and CNS stimulation. <strong>Benzodiazepines</strong> reduce CNS excitation and secondarily normalize vitals. Haloperidol is inadequate alone and can lower seizure threshold; it also does not address the underlying physiology. <em>Propranolol is contraindicated</em> in cocaine toxicity — unopposed alpha stimulation can worsen hypertension. Physical restraints increase metabolic heat and worsen outcomes.
+<div class="exp-source">Richards JR, et al. Ann Emerg Med. 2017;69(3):384–391. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 79.</div>`
+      },
+      {
+        img: 'https://images.pexels.com/photos/5699514/pexels-photo-5699514.jpeg?auto=compress&cs=tinysrgb&w=800',
+        imgFallback: '💊', imgLabel: 'Acetaminophen (Tylenol) — most common cause of acute liver failure in the US',
+        scenario: 'Intentional ingestion — "feels fine"',
+        text: 'A 24-year-old took approximately 9 grams of acetaminophen 7 hours ago. She feels well — only mild nausea. Her serum APAP level is 165 mcg/mL, which plots above the treatment line on the Rumack-Matthew nomogram. Her ALT is 38 U/L (normal). Should N-acetylcysteine (NAC) be started?',
+        choices: [
+          'No — she is asymptomatic; observe and repeat LFTs in 12 hours',
+          'No — NAC is only beneficial within 4 hours of ingestion',
+          'Yes — the nomogram level is the indication; normal LFTs at 7 hours does not mean no risk',
+          'Yes — but wait for the 12-hour APAP level to confirm the trend first'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Normal LFTs at 7 hours do NOT rule out hepatotoxicity — treat based on the nomogram</div>
+Acetaminophen hepatotoxicity evolves in stages: toxicity peaks at 72–96 hours after ingestion. LFTs are often completely normal in the first 12–24 hours even in severe poisoning. The <strong>Rumack-Matthew nomogram</strong> uses the serum level at 4+ hours to predict risk — an above-line level at 7 hours clearly mandates NAC regardless of symptoms. NAC is most effective when started within 8 hours, but still significantly beneficial up to 24 hours and beyond. Never withhold it based on the patient "feeling fine."
+<div class="exp-source">Rumack BH, Matthew H. Pediatrics. 1975;55(6):871–876. Acetaminophen Poisoning: AACT Position Statement. Clin Toxicol. 2014;52(9):956–967.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/12leadECG.jpg?width=640',
+        imgFallback: '🫀', imgLabel: '12-lead ECG — wide QRS complex in TCA overdose',
+        scenario: 'Overdose — wide-complex ECG and hypotension',
+        text: 'A 32-year-old took her entire bottle of amitriptyline. She is lethargic, BP 84/52, HR 122. Her ECG shows a QRS of 140 ms with a tall R wave in lead aVR. What is the treatment of choice for the QRS widening and hemodynamic instability?',
+        choices: [
+          'Lidocaine 1 mg/kg IV — treat the ventricular dysrhythmia directly',
+          'Sodium bicarbonate 1–2 mEq/kg IV bolus — alkalinization narrows QRS and raises BP',
+          'Magnesium sulfate 2 g IV — stabilize cardiac membranes',
+          'Flumazenil 0.2 mg IV — reverse the sedative component'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Sodium bicarbonate is the cornerstone of TCA toxicity — alkalinization plus sodium loading</div>
+Tricyclic antidepressants cause toxicity via three mechanisms: fast sodium channel blockade (→ QRS widening), alpha-1 blockade (→ hypotension), and anticholinergic effects. <strong>Sodium bicarbonate</strong> works by: (1) alkalinizing the blood to pH 7.45–7.55, which reduces TCA binding to sodium channels, and (2) providing a sodium load to overcome the blocked channels. A QRS ≥100 ms or R wave in aVR ≥3 mm are indications to treat. <em>Flumazenil is contraindicated</em> — it can precipitate seizures in TCA overdose. Lidocaine is second-line only.
+<div class="exp-source">Liebelt EL, et al. Ann Emerg Med. 1995;26(2):195–201. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 71.</div>`
+      }
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // QUIZ 2 — MARINE ENVENOMATIONS
+  // Level: PGY1–3 · Field treatment · What NOT to do
+  // ══════════════════════════════════════════
+  {
+    id: 'marine', title: 'Marine Envenomations', icon: '🌊', color: '#0ea5e9',
+    description: 'Beach and reef injuries — immediate treatment and common mistakes',
+    questions: [
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Chrysaora_quinquecirrha.jpg?width=640',
+        imgFallback: '🪼', imgLabel: 'Atlantic sea nettle (Chrysaora quinquecirrha) — common jellyfish along US East Coast',
+        scenario: 'Beach sting — tentacles still present',
+        text: 'A swimmer is stung by a jellyfish with visible tentacles still adhered to her forearm. A lifeguard offers to pour fresh water from his water bottle over the wound. What is the correct response?',
+        choices: [
+          'Accept — fresh water neutralizes the venom effectively',
+          'Decline — fresh water causes unfired nematocysts to discharge, worsening the sting; use seawater or vinegar',
+          'Accept, but immediately follow with a vinegar rinse',
+          'Urine is the preferred first-line treatment due to its neutral pH'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Fresh water triggers more nematocysts — always use seawater or vinegar</div>
+Jellyfish tentacles contain thousands of nematocysts that can still fire after the animal is dead or detached. The osmotic shock of <strong>fresh (hypo-osmotic) water</strong> causes unfired nematocysts to discharge, injecting additional venom. <em>Urine is also hypotonic</em> and has the same harmful effect. Correct field treatment: (1) Remove tentacles using a card or gloved hands — never bare skin. (2) Rinse with seawater or 5% acetic acid (vinegar). (3) Immerse in hot water (45°C) for pain. For <em>box jellyfish</em> (Australia), vinegar is specifically recommended before removal to prevent further nematocyst discharge.
+<div class="exp-source">Auerbach PS. Auerbach's Wilderness Medicine, 7th ed., Ch. 72. Cegolon L, et al. PLoS Negl Trop Dis. 2013;7(4):e2190.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Southern_stingray.jpg?width=640',
+        imgFallback: '🐟', imgLabel: 'Southern stingray (Hypanus americanus) — common stingray in shallow Atlantic/Caribbean coastal waters',
+        scenario: 'Wading beach — foot puncture',
+        text: 'A 16-year-old steps on a stingray while wading and sustains a puncture wound to the dorsum of his foot with immediate severe pain. The wound is bleeding moderately. What is the most effective field treatment for pain?',
+        choices: [
+          'Apply an ice pack — reduce swelling and pain via vasoconstriction',
+          'Rinse with fresh water and apply a pressure bandage',
+          'Immerse the foot in water as hot as comfortably tolerable (~45°C) until pain resolves',
+          'Oral ibuprofen — sufficient analgesia for puncture wounds'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Hot water immersion (~45°C) is first-line — stingray venom is heat-labile</div>
+Stingray venom contains heat-labile proteins. <strong>Immersion in hot water (approximately 45°C, as hot as the patient can tolerate without scalding)</strong> denatures the venom and provides dramatic pain relief, often within 30–90 minutes. Ice is counterproductive — the venom is not affected by cold and vasoconstriction may worsen tissue injury. Wound care: gently irrigate, remove visible spine fragments, do not close the wound (infection risk), and update tetanus. Spine fragments left in joint spaces or deep tissue require imaging and surgical evaluation.
+<div class="exp-source">Auerbach's Wilderness Medicine, 7th ed., Ch. 74. Perkins RA, Morgan SS. Wilderness Environ Med. 2004;15(2):133–138.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Pterois_volitans_Manado-e_edit.jpg?width=640',
+        imgFallback: '🐟', imgLabel: 'Red lionfish (Pterois volitans) — venomous dorsal, pelvic, and anal spines; invasive in the Caribbean',
+        scenario: 'Caribbean reef diving — spine contact',
+        text: 'A recreational diver brushes against a lionfish\'s dorsal spines and immediately develops intense burning pain over his hand with erythema and swelling. What is the correct field treatment?',
+        choices: [
+          'Pressure immobilization bandage from fingers to elbow — standard marine envenomation protocol',
+          'Cold water or ice pack — reduce the inflammatory response',
+          'Immersion in hot water (~45°C) until pain resolves — lionfish venom is heat-labile',
+          'Evacuate immediately; no field treatment is available for lionfish envenomation'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Hot water immersion works for all scorpionfish family envenomations (lionfish, stonefish, scorpionfish)</div>
+Lionfish, stonefish, and scorpionfish belong to the family Scorpaenidae. Their venoms share heat-labile protein toxins. <strong>Hot water immersion at 45°C</strong> (as hot as tolerable without scalding) is the mainstay of treatment and can provide near-complete pain relief. Pressure-immobilization bandaging is used for sea snake and funnel-web spider bites in Australia — not for scorpionfish. Ice has no benefit and may worsen ischemic injury. Monitor for systemic effects (hypotension, arrhythmia) with stonefish envenomation specifically.
+<div class="exp-source">Auerbach's Wilderness Medicine, 7th ed., Ch. 74. Atkinson PR, et al. Emerg Med J. 2006;23(4):306–311.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Diadema_antillarum.jpg?width=640',
+        imgFallback: '🦔', imgLabel: 'Long-spined sea urchin (Diadema antillarum) — brittle black spines penetrate skin and break on removal',
+        scenario: 'Tide pool — foot injury',
+        text: 'A child steps on a sea urchin and has multiple purple-black spines visible in the sole of her foot. Her parents want to squeeze the wound to push out the spines. What is the best advice?',
+        choices: [
+          'Agree — squeezing gently will help expel superficial spines',
+          'Agree — but apply heat first to soften the skin around the spines',
+          'Disagree — squeezing breaks spines deeper; remove accessible spines with fine forceps, then immerse in hot water for pain',
+          'Disagree — leave all spines in place; they dissolve within 2–3 days'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Remove accessible spines with forceps — squeezing fragments them deeper</div>
+Sea urchin spines are brittle and break easily, driving fragments deeper into tissue if squeezed. The correct approach: (1) Remove accessible spines using <strong>fine-tipped forceps or a needle</strong>. (2) Immerse in hot water (~45°C) for analgesia. (3) Small residual fragments near a joint may require imaging and surgical removal; superficial fragments in soft tissue often resorb over weeks. Dark discoloration around a spine does not always indicate retained foreign body — the pigment from the spine can stain tissue harmlessly. Wounds may be colonized by Vibrio species; consider prophylactic antibiotics in immunocompromised patients.
+<div class="exp-source">Auerbach's Wilderness Medicine, 7th ed., Ch. 74. Burnett JW, et al. Cutis. 1986;38(4):261–264.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Conus_magus.jpg?width=640',
+        imgFallback: '🐚', imgLabel: 'Venomous cone snail (Conus sp.) — the radula tip fires like a harpoon; Conus textile is among the most deadly',
+        scenario: 'Shell collecting — progressive weakness',
+        text: 'A beachcomber picks up a live cone snail shell and is stung on the palm. Within 20 minutes she has spreading numbness up the arm, diplopia, and increasing difficulty swallowing. What is the most critical aspect of management?',
+        choices: [
+          'Administer cone snail antivenom — available at major Indo-Pacific hospitals',
+          'Apply hot water to the sting site to denature conotoxins',
+          'Anticipate airway failure — conotoxin causes ascending flaccid paralysis; prepare for respiratory support and evacuation',
+          'Apply a tourniquet proximal to the sting to limit venom spread'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">No antivenom exists — the airway is the priority in cone snail envenomation</div>
+Cone snail venom contains <em>conotoxins</em>, which selectively block voltage-gated ion channels at the neuromuscular junction, causing <strong>ascending flaccid paralysis</strong> similar to tetrodotoxin. There is <em>no antivenom</em>. Diplopia and dysphagia are harbingers of impending respiratory arrest. Treatment is entirely supportive: early airway management, mechanical ventilation, and rapid evacuation. Hot water and tourniquets have no proven benefit. Paralysis may persist for hours to days but is reversible with supportive care. Prehospital pressure-immobilization bandaging (Australian first-aid) is sometimes recommended to slow spread.
+<div class="exp-source">Auerbach's Wilderness Medicine, 7th ed., Ch. 74. Olivera BM, Cruz LJ. Toxicon. 2001;39(1):7–14.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Hapalochlaena_maculosa.jpg?width=640',
+        imgFallback: '🐙', imgLabel: 'Blue-ringed octopus (Hapalochlaena lunulata) — iridescent blue rings flash as a warning when threatened',
+        scenario: 'Tide pool — child with rapid weakness',
+        text: 'A 10-year-old picks up a small octopus from a tide pool in the Philippines. The octopus flashes vivid iridescent blue rings. Within minutes the child has lip tingling, rapidly progressive weakness, and labored breathing. A bystander says antivenom must be given immediately. Is this correct?',
+        choices: [
+          'Yes — blue-ringed octopus antivenom must be given within 30 minutes of the sting',
+          'Yes — but only the Australian CSL antivenom is effective; check local availability',
+          'No — there is no antivenom; treatment is supportive airway management and positive-pressure ventilation',
+          'No — give atropine; tetrodotoxin causes severe cholinergic excess'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">No antivenom exists for blue-ringed octopus — ventilate and the paralysis will resolve</div>
+Blue-ringed octopi produce <strong>tetrodotoxin (TTX)</strong>, which blocks voltage-gated sodium channels and causes flaccid neuromuscular paralysis. No antivenom exists anywhere in the world. The sting itself is often painless and may go unnoticed. The life-saving intervention is <em>early positive-pressure ventilation</em>. The toxin does not affect the heart or brain directly — patients who are ventilated survive with full neurological recovery. TTX poisoning does not cause cholinergic excess, so atropine is not indicated. Evacuation to definitive care with mechanical ventilation is the priority.
+<div class="exp-source">Auerbach's Wilderness Medicine, 7th ed., Ch. 74. Sheumack DD, et al. Science. 1978;199(4325):188–189.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Portuguese_Man-O-War_(Physalia_physalis).jpg?width=640',
+        imgFallback: '🪼', imgLabel: 'Portuguese Man-o\'-War (Physalia physalis) — colonial siphonophore; tentacles extend up to 10 meters',
+        scenario: 'Atlantic beach — swimmer with tentacles on skin',
+        text: 'A swimmer is stung by a Portuguese Man-o\'-War. Long blue tentacles remain adhered to her leg with a linear whip-like welt. A bystander prepares to rinse the tentacles off with a water bottle. What is the correct sequence of actions?',
+        choices: [
+          'Rinse with fresh water first, then remove tentacles with a card',
+          'Rub dry sand vigorously over the area to mechanically dislodge nematocysts',
+          'Remove tentacles using a card or gloved hands (not bare skin), then rinse with seawater or vinegar',
+          'Pull tentacles off with bare hands as quickly as possible to minimize further envenomation'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Remove tentacles with a barrier — then rinse with seawater or vinegar (not fresh water)</div>
+Man-o'-War tentacles can extend up to 10 meters and contain millions of nematocysts. Key principles: (1) Never touch tentacles with bare skin — use a card, stick, or gloved hand. (2) Do <em>not</em> rinse with fresh water (triggers nematocyst firing). (3) Rinse with <strong>seawater or vinegar</strong>. (4) Hot water immersion for pain. Sand rubbing can break tentacle fragments and embed nematocysts further. Systemic reactions (anaphylaxis, arrhythmia) are rare but reported; observe symptomatic patients. Note: Man-o'-War is not a true jellyfish — it is a colonial siphonophore — but field treatment is the same.
+<div class="exp-source">Auerbach's Wilderness Medicine, 7th ed., Ch. 72. Burnett JW, Calton GJ. Toxicon. 1987;25(5):581–602.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Synanceia_verrucosa.jpg?width=640',
+        imgFallback: '🐡', imgLabel: 'Stonefish (Synanceia verrucosa) — world\'s most venomous fish; camouflage makes it nearly invisible on the reef floor',
+        scenario: 'Indo-Pacific reef — stepped on \'rock\'',
+        text: 'A snorkeler steps on what looks like a rock in shallow water in Bali and develops immediate excruciating foot pain, swelling, and discoloration. Stonefish is suspected. Hot water immersion is started. What additional specific treatment is available?',
+        choices: [
+          'Apply a pressure-immobilization bandage to slow venom spread to lymphatics',
+          'Corticosteroids IM — reduce the potent inflammatory venom component',
+          'Stonefish antivenom (CSL) IM or IV — a specific antivenom exists and reverses venom activity',
+          'No additional treatment is available; hot water is the only proven intervention'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Stonefish antivenom (CSL, Australia) is the only fish antivenom in routine clinical use</div>
+Stonefish (<em>Synanceia verrucosa</em>) is considered the world's most venomous fish. Its venom (stonustoxin) causes intense local necrosis and can cause hypotension and cardiovascular collapse. Unlike other scorpionfish, stonefish envenomation may warrant <strong>CSL stonefish antivenom</strong> (produced in Australia), particularly for severe pain, systemic effects, or multiple spine punctures. Dosing: 1 vial IM per 1–2 spines; IV for systemic toxicity. Hot water immersion is still the critical first step. Pressure-immobilization bandaging is not recommended for stonefish (it can worsen pain and is not proven to limit venom spread with this species).
+<div class="exp-source">Auerbach's Wilderness Medicine, 7th ed., Ch. 74. Gwee MC, et al. Nat Toxins. 1994;2(2):64–76. CSL Stonefish Antivenom Product Information, 2020.</div>`
+      }
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // QUIZ 3 — TERRESTRIAL ENVENOMATIONS
+  // Level: PGY1–3 · Snakes, spiders, insects, lizards
+  // ══════════════════════════════════════════
+  {
+    id: 'terrestrial', title: 'Terrestrial Envenomations', icon: '🐍', color: '#84cc16',
+    description: 'Snakes, spiders, ticks, bees, and lizards — field decisions that matter',
+    questions: [
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Western_Diamondback_Rattlesnake.jpg?width=640',
+        imgFallback: '🐍', imgLabel: 'Western diamondback rattlesnake (Crotalus atrox) — most common cause of fatal snakebite in the US',
+        scenario: 'Backcountry trail — snakebite kit on hand',
+        text: 'A 44-year-old hiker is bitten on the lower leg by a rattlesnake. His group has a commercial snakebite kit with a suction device, scalpel blade, and tourniquet. What is the most appropriate action?',
+        choices: [
+          'Apply the suction device immediately — most effective if used within 3 minutes',
+          'Apply a tourniquet proximal to the bite — slow systemic venom spread',
+          'Incise the bite marks and express venom manually — time-critical intervention',
+          'Immobilize the extremity, keep the patient calm, and evacuate promptly — do not use the kit'
+        ],
+        correct: 3,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Snakebite kits are harmful — the only field treatment is immobilization and evacuation</div>
+Evidence clearly shows that suction devices, incision, tourniquets, and electric shock are <em>ineffective and harmful</em>. Suction removes <1% of venom and causes local tissue injury; incision risks infection, nerve, and vascular damage. Lymphatic venom absorption begins within seconds. The correct management: (1) <strong>Remove the patient from the snake</strong>. (2) <strong>Immobilize the extremity at heart level</strong> — neither elevated nor dependent. (3) Remove rings, watches, and tight clothing from the bitten limb. (4) Keep the patient calm and still. (5) <strong>Evacuate to a hospital with antivenom (CroFab/ANAVIP)</strong>. Photograph the snake only if safe.
+<div class="exp-source">Bush SP, et al. Ann Emerg Med. 2015;65(1):97–98. Auerbach's Wilderness Medicine, 7th ed., Ch. 53. ACEP Clinical Policy: North American Crotaline Snakebite, 2018.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Coral_snake.jpg?width=640',
+        imgFallback: '🐍', imgLabel: 'Eastern coral snake (Micrurus fulvius) — red-yellow-black banding; "red on yellow, kill a fellow"',
+        scenario: 'Florida yard — asymptomatic patient 2 hours post-bite',
+        text: 'A 35-year-old is bitten on the finger by an eastern coral snake in Florida. Two hours later he has no symptoms — no pain, swelling, or neurological changes. His friend says "no symptoms means no venom — you don\'t need antivenom." Is this correct?',
+        choices: [
+          'Yes — the absence of symptoms at 2 hours confirms a dry bite; discharge is appropriate',
+          'Yes — wait for neurological symptoms to appear before committing to antivenom',
+          'No — coral snake neurotoxicity can be delayed 6–12 hours; antivenom must be given before symptoms develop',
+          'No — but antivenom should wait for confirmatory species identification by a herpetologist'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Coral snake neurotoxicity is delayed — treat before symptoms, not after</div>
+Eastern coral snake venom contains postsynaptic neurotoxins (similar to alpha-bungarotoxin) that block acetylcholine receptors at the neuromuscular junction. Symptom onset is <strong>delayed 6–12 hours</strong>, and once paralysis begins it can progress rapidly and be difficult to reverse even with antivenom. The critical teaching point: <em>a symptom-free patient at 2 hours is NOT safe to discharge</em>. All suspected coral snake bites require hospital admission for at least 24 hours and strong consideration of antivenom (Pfizer's Micrurus fulvius antivenom) even in asymptomatic patients. Treat the bite, not the symptoms.
+<div class="exp-source">Kitchens CS, Van Mierop LH. JAMA. 1987;258(12):1615–1618. Auerbach's Wilderness Medicine, 7th ed., Ch. 53.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Latrodectus_mactans.jpg?width=640',
+        imgFallback: '🕷️', imgLabel: 'Black widow spider (Latrodectus mactans) — distinctive red hourglass marking on glossy black abdomen',
+        scenario: 'Camping — severe abdominal pain and rigidity',
+        text: 'A 45-year-old woman develops severe cramping abdominal pain, board-like muscle rigidity of the abdomen and thighs, profuse diaphoresis, and hypertension 1 hour after feeling a sharp "pinprick" while using an outdoor pit toilet. What is the most likely diagnosis?',
+        choices: [
+          'Acute appendicitis — guarding and rigidity are classic peritoneal signs',
+          'Heat stroke — diaphoresis and hyperthermia from the outdoor environment',
+          'Black widow spider envenomation (latrodectism) — alpha-latrotoxin causes systemic neuromuscular toxicity',
+          'Dehydration-induced muscle cramp with autonomic response'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Black widow envenomation classically mimics an acute abdomen — the outdoor setting is the clue</div>
+Alpha-latrotoxin causes massive release of neurotransmitters from presynaptic terminals, producing <strong>latrodectism</strong>: regional or diffuse muscle cramps, abdominal rigidity (without true peritoneal signs), diaphoresis, hypertension, tachycardia, and piloerection. Patients often present to surgeons with a suspected acute abdomen — the bite site may be minor and unnoticed. Management: opioid analgesia, benzodiazepines for muscle spasm, antihypertensives as needed. <em>Latrodectus antivenom</em> is available and rapidly effective but reserved for severe cases (young children, elderly, significant cardiac or respiratory compromise) due to anaphylaxis risk.
+<div class="exp-source">Clark RF, et al. Ann Emerg Med. 1992;21(7):782–787. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 119.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Loxosceles_reclusa.jpg?width=640',
+        imgFallback: '🕷️', imgLabel: 'Brown recluse spider (Loxosceles reclusa) — violin-shaped (fiddle-back) marking on cephalothorax',
+        scenario: 'Rural cabin — necrotic wound 3 days post-bite',
+        text: 'A patient presents 3 days after a probable spider bite in a rural cabin with a painful wound on the thigh: a central dark eschar surrounded by a pale ischemic ring and outer erythema ("red-white-blue" sign). The wound is 3 cm across. What is the best initial approach?',
+        choices: [
+          'Immediate surgical debridement of all necrotic and ischemic tissue',
+          'Dapsone 100 mg daily — proven to limit loxosceles-mediated dermonecrosis',
+          'Wound care, analgesia, and close follow-up — early surgery worsens outcomes; observe for systemic loxoscelism',
+          'Hyperbaric oxygen — first-line evidence-based treatment for necrotic arachnidism'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Conservative management first — early surgery worsens outcomes in brown recluse bites</div>
+Loxosceles venom (sphingomyelinase D) causes progressive local dermonecrosis that can evolve over 1–2 weeks. <strong>Early surgical debridement is harmful</strong> — cutting through the expanding ischemic margin worsens scarring. The wound should be allowed to declare itself, with definitive closure deferred 6–8 weeks. Dapsone is commonly prescribed but has no strong evidence and risks methemoglobinemia and hemolysis (check G6PD before use). Hyperbaric oxygen and corticosteroids are also unproven. Monitor for <em>systemic loxoscelism</em>: fever, hemolysis, thrombocytopenia, and dark urine (myoglobinuria/hemoglobinuria) — particularly in children — which may require hospitalization.
+<div class="exp-source">Swanson DL, Vetter RS. N Engl J Med. 2005;352(7):700–707. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 119.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Ixodes_scapularis.jpg?width=640',
+        imgFallback: '🪲', imgLabel: 'Blacklegged deer tick (Ixodes scapularis) — primary vector for Lyme disease in the northeastern US',
+        scenario: 'Post-hike — engorged tick found in axilla',
+        text: 'After a weekend hike in New England, a patient finds a fully engorged Ixodes tick embedded in her axilla. She asks the best way to remove it. Which technique is correct?',
+        choices: [
+          'Apply petroleum jelly (Vaseline) to suffocate the tick — it will release on its own',
+          'Heat the tick\'s body with a lit match to make it withdraw',
+          'Grasp the tick as close to the skin as possible with fine-tipped forceps and pull upward with steady, even pressure',
+          'Twist counterclockwise while pulling — the mouthparts are threaded like a screw'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Mechanical removal with fine forceps at the skin level — no twisting, no chemicals</div>
+The correct technique: grip the tick with fine-tipped forceps <strong>as close to the skin surface as possible</strong> (not around the body) and pull upward with gentle steady pressure — do not twist or jerk. Vaseline, heat, and nail polish are ineffective and cause the tick to salivate or regurgitate into the wound, potentially increasing pathogen transmission. After removal, clean the site with alcohol. <em>Borrelia burgdorferi</em> (Lyme) transmission typically requires 36–48 hours of attachment; single-dose doxycycline 200 mg is indicated within 72 hours if the tick was attached ≥36 hours in a Lyme-endemic area. Save the tick in alcohol if possible for identification.
+<div class="exp-source">Wormser GP, et al. Clin Infect Dis. 2006;43(9):1089–1134. Auerbach's Wilderness Medicine, 7th ed., Ch. 47.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/European_honey_bee_extracts_nectar.jpg?width=640',
+        imgFallback: '🐝', imgLabel: 'European honeybee (Apis mellifera) — sting triggers IgE-mediated anaphylaxis in sensitized individuals',
+        scenario: 'Trail emergency — anaphylaxis with EpiPen available',
+        text: 'A 31-year-old with a known severe bee allergy is stung and develops generalized hives, throat tightness, hoarse voice, and becomes hypotensive 10 minutes after the sting. She has an EpiPen. Her trail guide asks if diphenhydramine (Benadryl) should be given first to treat the allergic reaction. What is the correct answer?',
+        choices: [
+          'Yes — antihistamines are first-line for allergic reactions; use EpiPen only if no improvement',
+          'Yes — give diphenhydramine, then a corticosteroid, then epinephrine if still worsening',
+          'No — epinephrine is the only life-saving treatment; use the EpiPen in the outer thigh immediately',
+          'No — epinephrine should be withheld until the airway is completely obstructed'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Epinephrine is the ONLY life-saving drug in anaphylaxis — antihistamines do not treat it</div>
+Anaphylaxis is a systemic immediate hypersensitivity reaction mediated by mast cell and basophil degranulation. Diphenhydramine blocks histamine receptors but does <em>not</em> reverse bronchospasm, anaphylactic hypotension, or laryngeal edema. It can treat urticaria but is adjunctive at best. <strong>Intramuscular epinephrine (0.3–0.5 mg of 1:1000, outer thigh)</strong> is the only drug proven to reverse anaphylaxis. Delays increase mortality. Corticosteroids and antihistamines are given after epinephrine to reduce the risk of biphasic reaction but never before. Patients should be observed for 4–6 hours after epinephrine due to biphasic recurrence risk.
+<div class="exp-source">Simons FE, et al. J Allergy Clin Immunol. 2011;127(3):587–593. Campbell RL, et al. J Allergy Clin Immunol Pract. 2014;2(3):292–301.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Buthus_occitanus.jpg?width=640',
+        imgFallback: '🦂', imgLabel: 'Venomous scorpion — Arizona bark scorpion (Centruroides sculpturatus) is the only US scorpion capable of causing life-threatening envenomation',
+        scenario: 'Arizona — toddler with abnormal movements after shoe sting',
+        text: 'A 3-year-old in Arizona develops uncontrolled crying, roving random eye movements, excessive drooling, and involuntary jerking of all extremities 1 hour after a probable sting from a small yellow scorpion found in his shoe. What is the most appropriate treatment?',
+        choices: [
+          'Oral pain medication and observation — most pediatric bark scorpion stings are mild',
+          'IV morphine — analgesia is the primary intervention; symptoms will resolve spontaneously',
+          'Anascorp (centruroides antivenom) IV — rapidly resolves neurotoxic symptoms within 1 hour',
+          'Benzodiazepines alone to control the abnormal movements'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Anascorp antivenom is safe and rapidly effective for grade III–IV bark scorpion envenomation in children</div>
+<em>Centruroides sculpturatus</em> is the only dangerous scorpion in the US. Neurotoxic symptoms (grade III–IV: roving eye movements, hypersalivation, involuntary muscle activity, respiratory compromise) occur primarily in children <6 years due to their smaller body mass per venom load. <strong>Anascorp (centruroides immune F(ab')₂)</strong> was FDA-approved in 2011 and resolves symptoms within 60 minutes in most patients, versus hours to days with benzodiazepine-only management. Benzodiazepines alone increase sedation risk without addressing the toxin. Anascorp is safe, with a low anaphylaxis rate (~0.5%).
+<div class="exp-source">Boyer LV, et al. N Engl J Med. 2009;360(20):2090–2098. Skolnik AB, Ewald MB. Pediatr Emerg Care. 2013;29(1):98–103.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Heloderma_suspectum.jpg?width=640',
+        imgFallback: '🦎', imgLabel: 'Gila monster (Heloderma suspectum) — beaded orange-and-black skin; only venomous lizard native to the US',
+        scenario: 'Sonoran desert — lizard firmly attached to hand',
+        text: 'A wildlife photographer is bitten by a Gila monster that remains firmly clamped and chewing on his hand. His colleague grabs the lizard\'s body and pulls hard, but it won\'t release. What is the correct removal technique?',
+        choices: [
+          'Cut the lizard\'s head off — fastest and most effective method of release',
+          'Submerge both hand and lizard in cold water — activates a cold-water release reflex',
+          'Insert a flat rigid object (stick, pry bar, or knife blade) between the jaws from the lateral side and lever the mouth open',
+          'Squeeze the lizard firmly around the midsection — pressure activates a squeeze-release reflex'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Pry the jaw open laterally — Gila monsters chew venom in; pulling causes worse injury</div>
+Unlike snakes, Gila monsters have no venom apparatus to "squeeze." Venom flows along grooved teeth by capillary action during chewing — <em>prolonged contact causes more envenomation</em>. Pulling the lizard away without releasing the jaw tears tissue and may break teeth off in the wound. The correct technique: <strong>insert a flat rigid object between the jaws from the lateral aspect</strong> (edge of a pry bar, knife blade, or firm stick) and lever the mouth open. Alternatively, hold a flame near the jaw. Submerging in water is sometimes effective. After removal: irrigate the wound thoroughly, check for retained teeth with X-ray, ensure tetanus immunity, and monitor for hypotension and coagulopathy.
+<div class="exp-source">Bou-Abboud CF, Kardassakis DG. Wilderness Environ Med. 1988;1(4):191–199. Auerbach's Wilderness Medicine, 7th ed., Ch. 55.</div>`
+      }
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // QUIZ 4 — ANTIDOTES CHALLENGE
+  // Level: PGY1–3 · Mechanism + indication + timing
+  // ══════════════════════════════════════════
+  {
+    id: 'antidotes', title: 'Antidotes Challenge', icon: '💉', color: '#a855f7',
+    description: 'Match the right antidote to the right toxin — mechanism, indication, and timing',
+    questions: [
+      {
+        img: 'https://images.pexels.com/photos/4386467/pexels-photo-4386467.jpeg?auto=compress&cs=tinysrgb&w=800',
+        imgFallback: '💊', imgLabel: 'N-acetylcysteine (NAC/Mucomyst) IV solution — antidote for acetaminophen overdose',
+        scenario: 'Overdose — "feels fine" 7 hours later',
+        text: 'A 23-year-old took 9 grams of acetaminophen 7 hours ago. She is asymptomatic — mild nausea only. Serum APAP is 165 mcg/mL (above treatment line). ALT is 40 U/L (normal). A nurse says "she feels fine, skip the NAC." What is the correct response?',
+        choices: [
+          'Agree — start NAC only if ALT rises above 3× normal at 12 hours',
+          'Agree — NAC is only beneficial if given within 4 hours of ingestion',
+          'Disagree — NAC is indicated by the nomogram level; normal LFTs at 7 hours does not rule out hepatotoxicity',
+          'Disagree — but first confirm with a repeat APAP level at 12 hours'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Treat the nomogram, not the symptoms — hepatotoxicity peaks at 72–96 hours, not at presentation</div>
+Acetaminophen toxicity evolves in 4 stages over 96 hours. At 7 hours, the patient is in Stage 1 (nausea, malaise) — LFTs are normal even in severe poisoning. The <strong>Rumack-Matthew nomogram</strong> predicts hepatotoxicity risk using the 4–24 hour serum level. An above-line level mandates NAC regardless of symptoms or LFTs. NAC works by replenishing glutathione, neutralizing the toxic NAPQI metabolite. It is most effective within 8 hours but has clear benefit up to 24 hours. Beyond 24 hours, NAC still improves outcomes in fulminant liver failure.
+<div class="exp-source">Rumack BH, Matthew H. Pediatrics. 1975;55(6):871–876. Acetaminophen Poisoning Position Statement: AACT/EAPCCT. Clin Toxicol. 2014;52(9):956–967.</div>`
+      },
+      {
+        img: 'https://images.pexels.com/photos/5722163/pexels-photo-5722163.jpeg?auto=compress&cs=tinysrgb&w=800',
+        imgFallback: '💉', imgLabel: 'Naloxone (Narcan) — opioid reversal; re-dose when opioid duration exceeds naloxone\'s 30–90 min effect',
+        scenario: 'EMS transport — re-sedation after initial reversal',
+        text: 'Paramedics give naloxone 0.4 mg IM to a patient with suspected fentanyl overdose. He wakes up and is talking. Thirty minutes later in the ambulance he is unresponsive again. A medic says naloxone doesn\'t work for fentanyl. Is this correct?',
+        choices: [
+          'Yes — fentanyl is a synthetic opioid; naloxone only reliably reverses natural opioids',
+          'No — naloxone works for all opioids, but its duration (30–90 min) is shorter than fentanyl; re-dose or start an infusion',
+          'No — the patient must have co-ingested a non-opioid sedative; switch to flumazenil',
+          'Yes — re-sedation indicates the first dose was ineffective; intubation is now required'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Naloxone works for ALL opioids — re-sedation happens because naloxone clears before the opioid does</div>
+Naloxone is a competitive opioid antagonist effective at all opioid receptors regardless of the agonist. Its half-life is <strong>60–90 minutes</strong> — shorter than most opioids, especially transdermal fentanyl (which continues absorbing from the patch), methadone (24–36 h half-life), and extended-release formulations. Re-sedation is expected and is not treatment failure. Options: repeat naloxone boluses every 20–60 minutes, or a naloxone infusion (two-thirds of the effective reversal dose per hour). Patients should be monitored for at least 4–6 hours after opioid reversal.
+<div class="exp-source">Boyer EW. N Engl J Med. 2012;367(2):146–155. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 38.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Diazepam_10mg.jpg?width=640',
+        imgFallback: '💊', imgLabel: 'Diazepam (Valium) 2 mg tablets — benzodiazepine dependence contraindicates flumazenil reversal',
+        scenario: 'Chronic benzodiazepine user found sedated',
+        text: 'A 55-year-old who takes diazepam 20 mg/day for anxiety is brought in sedated after taking "several extra pills." He is breathing adequately (RR 14). A nurse suggests giving flumazenil IV to wake him up for assessment. What is the most important contraindication here?',
+        choices: [
+          'Flumazenil has a very long half-life and will cause prolonged over-reversal',
+          'Flumazenil is not effective for diazepam — it only works for short-acting benzodiazepines like midazolam',
+          'Flumazenil may precipitate acute benzodiazepine withdrawal seizures in a physically dependent patient',
+          'Flumazenil causes histamine release and anaphylaxis risk is high in elderly patients'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Flumazenil is contraindicated in benzodiazepine-dependent patients — it can cause refractory withdrawal seizures</div>
+Flumazenil competitively displaces benzodiazepines from GABA-A receptors. In a patient with <strong>physical dependence</strong>, abrupt receptor reversal unmasks withdrawal — which can include severe, refractory, potentially fatal seizures. Flumazenil also has a short half-life (~1 hour) and re-sedation is common. Its appropriate use is narrow: reversal of procedural (iatrogenic) benzodiazepine sedation in a patient without dependence. Always ask about chronic benzodiazepine, alcohol, or antiepileptic use before administering. A breathing, adequately perfusing patient can be monitored conservatively without flumazenil.
+<div class="exp-source">Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 75. Weinbroum A, et al. Crit Care Med. 1997;25(1):89–97.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Digitalis_purpurea2.jpg?width=640',
+        imgFallback: '🌸', imgLabel: 'Digitalis purpurea (foxglove) — source of digoxin; also causes toxicity via herbal tea',
+        scenario: 'Herbal tea ingestion — bradycardia and yellow-green vision',
+        text: 'An 80-year-old who made tea from her garden leaves (later identified as foxglove) presents with HR 38 (junctional rhythm on ECG), nausea, xanthopsia (yellow-green visual changes), and K⁺ of 5.9 mEq/L. She takes no medications. Which antidote is indicated?',
+        choices: [
+          'Atropine 1 mg IV — first-line for any bradycardia',
+          'Magnesium sulfate 2 g IV — cardiac glycoside membrane stabilization',
+          'Calcium gluconate IV — directly reverses digoxin\'s cardiac effects',
+          'Digoxin-specific Fab antibody fragments (DigiFab) — specific antidote for all cardiac glycoside toxicity'
+        ],
+        correct: 3,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Digoxin-specific Fab is the specific antidote — works for plant glycosides too, not just digoxin tablets</div>
+Foxglove, oleander, lily of the valley, and other plants contain cardiac glycosides that inhibit Na/K-ATPase with the same mechanism as digoxin. <strong>Digoxin-specific Fab fragments (DigiFab, formerly Digibind)</strong> bind glycoside molecules with extremely high affinity, rapidly reversing toxicity. Hyperkalemia (K⁺ >5.5) in this context is a marker of severe Na/K-ATPase inhibition and is itself an indication for Fab. Calcium gluconate is <em>relatively contraindicated</em> in digoxin toxicity — it may worsen intracellular calcium overload ("stone heart"). Atropine can transiently help bradycardia but does not address the toxin. Calculate Fab dose based on serum digoxin level or empirically (10–20 vials for life-threatening ingestion).
+<div class="exp-source">Antman EM, et al. N Engl J Med. 1990;323(25):1717–1722. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 64. Auerbach's Wilderness Medicine, 7th ed., Ch. 64.</div>`
+      },
+      {
+        img: 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=800&q=80&fit=crop',
+        imgFallback: '🔥', imgLabel: 'Structure fire — burning plastics release hydrogen cyanide; CO poisoning often co-exists',
+        scenario: 'House fire — altered mental status, anion gap, shock',
+        text: 'A firefighter rescued from a burning house is obtunded, BP 78/48 despite 2L IV fluids, with an anion gap metabolic acidosis. Both CO and cyanide poisoning from burning plastics are suspected. Which antidote is the safest choice when both exposures are possible?',
+        choices: [
+          'Sodium nitrite IV — most rapidly converts cyanide to cyanomethemoglobin',
+          'Amyl nitrite inhalation — appropriate for prehospital cyanide in this scenario',
+          'Hydroxocobalamin (Cyanokit) IV — binds cyanide directly; safe to use when CO is also suspected',
+          'Sodium thiosulfate alone — converts thiocyanate without causing methemoglobinemia'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Hydroxocobalamin is preferred in fire victims — nitrites are dangerous when CO is also present</div>
+In fire victims, cyanide and CO poisoning frequently co-occur. Sodium and amyl nitrite work by inducing <em>methemoglobinemia</em>, which creates a competitive sink for cyanide — but in a patient already impaired by carboxyhemoglobin, creating additional dysfunctional hemoglobin is dangerous and can precipitate cardiovascular collapse. <strong>Hydroxocobalamin (Cyanokit)</strong> works differently: it directly binds cyanide to form cyanocobalamin (Vitamin B₁₂), which is renally excreted. It has no effect on hemoglobin oxygen-carrying capacity and is safe in CO poisoning. Side effects: transient red discoloration of skin and urine (warn the team).
+<div class="exp-source">Borron SW, et al. Ann Emerg Med. 2007;49(6):794–801. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 126. Cyanokit Prescribing Information, Meridian Medical Technologies, 2019.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Norvasc.jpg?width=640',
+        imgFallback: '💊', imgLabel: 'Calcium channel blocker tablets (amlodipine/diltiazem/verapamil) — overdose causes profound bradycardia and cardiogenic shock',
+        scenario: 'Extended-release CCB accidental overdose',
+        text: 'A 68-year-old on diltiazem for AFib accidentally takes 3 days\' worth of extended-release pills. He presents 5 hours later with BP 68/40, HR 34 (junctional), and confusion. IV fluids have not helped. What is the most appropriate first pharmacological intervention?',
+        choices: [
+          'Atropine 1 mg IV — first-line for any bradycardia',
+          'Dopamine infusion — catecholamine vasopressor support',
+          'Calcium gluconate 3 g IV (or calcium chloride 1 g IV) — directly antagonizes calcium channel blockade',
+          'Digoxin IV — positive inotropy to increase cardiac output'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Calcium reverses CCB toxicity by flooding the receptor — use early and in high doses</div>
+Calcium channel blockers block L-type calcium channels in the myocardium and vasculature. Administering <strong>exogenous calcium</strong> overcomes this blockade by mass action — raising extracellular calcium concentration restores conduction and contractility. Give calcium gluconate 3 g IV (or calcium chloride 1 g IV — 3× more calcium per gram) as an initial bolus; repeat as needed. Atropine is often tried first but is rarely effective for CCB-induced bradycardia. Dopamine has a role but works less effectively than calcium plus insulin. Extended-release preparations peak at 6–8 hours — observe all CCB overdoses for at least 12–24 hours.
+<div class="exp-source">Graudins A, et al. Ann Emerg Med. 1996;28(5):543–549. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 61.</div>`
+      },
+      {
+        img: 'https://images.pexels.com/photos/5863367/pexels-photo-5863367.jpeg?auto=compress&cs=tinysrgb&w=800',
+        imgFallback: '💉', imgLabel: 'Insulin syringe — high-dose insulin euglycemia therapy (HIET): 1 unit/kg IV bolus for refractory CCB toxicity',
+        scenario: 'Refractory CCB cardiogenic shock',
+        text: 'The diltiazem OD patient (above) received calcium, atropine, and is on dopamine, yet remains in cardiogenic shock (BP 62/38, HR 32). What is the next strongly evidence-supported treatment for refractory calcium channel blocker toxicity?',
+        choices: [
+          'Glucagon 5 mg IV bolus — cardiac rescue agent, identical mechanism as in beta-blocker OD',
+          'High-dose insulin-euglycemia therapy (HIET) — 1 unit/kg IV bolus, then 0.5–1 unit/kg/hr infusion',
+          'Lipid emulsion 20% IV bolus — first-line for all lipid-soluble toxins',
+          'Magnesium sulfate 2 g IV — stabilizes cardiac membranes in CCB toxicity'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">High-dose insulin improves cardiac function in CCB toxicity — give dextrose to prevent hypoglycemia</div>
+The poisoned myocardium preferentially uses glucose as fuel (not free fatty acids). High doses of insulin <strong>improve cardiac contractility, heart rate, and vascular resistance</strong> in CCB toxicity via insulin receptors on cardiomyocytes, independent of glucose metabolism. Dosing: 1 unit/kg regular insulin IV bolus, then 0.5–1 unit/kg/hr; co-administer dextrose (D10W or D25W) to maintain euglycemia. Monitor glucose every 15–30 minutes — hypoglycemia is the main adverse effect. HIET is recommended in toxicology guidelines as early escalation therapy. Lipid emulsion is supported for lipophilic local anesthetic toxicity primarily; glucagon has weak evidence in CCB OD.
+<div class="exp-source">Engebretsen KM, et al. Clin Toxicol. 2011;49(4):277–283. Holger JS, et al. J Med Toxicol. 2011;7(1):3–9. ACMT Antidote Recommendations, 2020.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Methylenblau.jpg?width=640',
+        imgFallback: '🔵', imgLabel: 'Methylene blue solution — vivid blue color is characteristic; antidote for methemoglobinemia',
+        scenario: 'Endoscopy suite — cyanosis unresponsive to oxygen',
+        text: 'During upper endoscopy, benzocaine spray is applied to the throat. The patient develops sudden cyanosis unresponsive to 100% oxygen. SpO2 reads 82%. A co-oximetry blood gas shows methemoglobin of 34%. What is the correct treatment?',
+        choices: [
+          'Hyperbaric oxygen — the only delivery method that overcomes methemoglobin',
+          'Blood transfusion — replace non-functional hemoglobin with healthy red cells',
+          'Methylene blue 1–2 mg/kg IV over 5 minutes — reduces methemoglobin back to functional hemoglobin',
+          'Ascorbic acid (Vitamin C) IV — reduces methemoglobin slowly; first-line if methylene blue unavailable'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Methylene blue is the antidote for methemoglobinemia — it acts as an electron shuttle via NADPH</div>
+Benzocaine, dapsone, nitrites, and certain medications oxidize iron in hemoglobin from Fe²⁺ to Fe³⁺ (methemoglobin), which cannot carry oxygen. <strong>Methylene blue 1–2 mg/kg IV</strong> is reduced by NADPH methemoglobin reductase (requires G6PD activity) back to leucomethylene blue, which then reduces methemoglobin to functional hemoglobin. Indication: MetHb >25–30%, or <20–25% with symptoms. Important caveat: methylene blue fails in <em>G6PD deficiency</em> (may paradoxically worsen hemolysis); use ascorbic acid as alternative or transfuse. SpO2 pulse oximetry reads artificially at ~85% in methemoglobinemia — co-oximetry is required.
+<div class="exp-source">Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 127. Clifton J, Leikin JB. Am J Ther. 2003;10(4):289–291.</div>`
+      }
+    ]
+  },
+
+  // ══════════════════════════════════════════
+  // QUIZ 5 — WILDERNESS PLANT TOXINS
+  // Level: PGY1–3 · Recognition + management
+  // ══════════════════════════════════════════
+  {
+    id: 'plants', title: 'Wilderness Plant Toxins', icon: '🌿', color: '#f59e0b',
+    description: 'Foraged foods, herbal teas, and backyard plants that can kill',
+    questions: [
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Amanita_phalloides_1.JPG?width=640',
+        imgFallback: '🍄', imgLabel: 'Amanita phalloides (death cap) — responsible for >90% of fatal mushroom poisonings worldwide',
+        scenario: 'Wild mushroom dinner — delayed illness in whole family',
+        text: 'A family of 4 who foraged wild mushrooms develops severe vomiting and diarrhea beginning 10 hours after dinner. By the next day they feel better. On day 3, two family members develop jaundice and acute liver failure. Which feature of this timeline is the most critical diagnostic clue?',
+        choices: [
+          'The severity of the initial vomiting and diarrhea — predicts who will develop liver failure',
+          'Delayed onset of GI symptoms (>6 hours after eating) — strongly suggests Amanita phalloides or similar amatoxin-containing species',
+          'Clinical improvement on day 2 — indicates the toxin has been cleared and recovery is occurring',
+          'Only 2 of 4 family members developing liver failure — indicates the other two are immune'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">GI onset >6 hours after eating is the hallmark of amatoxin poisoning — early improvement is deceptive</div>
+Amatoxins (alpha-amanitin) in <em>Amanita phalloides</em> (death cap) and related species inhibit RNA polymerase II, causing cell death. The classic timeline: GI illness beginning <strong>6–24 hours</strong> after ingestion (not within 2–4 hours as with benign mushrooms), followed by a false recovery phase (days 2–3), then fulminant hepatic failure (days 3–5). Early GI symptom onset (1–3 hours) suggests benign species. The apparent improvement on day 2 is dangerous — patients and families believe they are recovering. Treatment: activated charcoal if early, aggressive supportive care, silibinin (milk thistle derivative) where available, and early liver transplant evaluation.
+<div class="exp-source">Santi L, et al. Clin Toxicol. 2012;50(9):820–826. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 117. Auerbach's Wilderness Medicine, 7th ed., Ch. 63.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Cicuta_maculata.jpg?width=640',
+        imgFallback: '🌿', imgLabel: 'Cicuta maculata (spotted water hemlock) — roots and stems cause violent, refractory seizures',
+        scenario: 'Streamside foraging — violent seizures in a child',
+        text: 'A 10-year-old eats the root of a plant found along a stream. Thirty minutes later he develops violent generalized tonic-clonic seizures that don\'t stop after one dose of lorazepam. Which plant is most consistent with this presentation?',
+        choices: [
+          'Poison hemlock (Conium maculatum) — causes severe grand mal seizures from the alkaloid coniine',
+          'Water hemlock (Cicuta douglasii or maculata) — cicutoxin is one of the most potent plant convulsants known',
+          'Wild parsnip — primary toxicity is photosensitive skin blistering, not neurological',
+          'Elderberry (Sambucus) — raw berries cause GI illness, not seizures'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Water hemlock causes violent, refractory seizures — poison hemlock causes ascending paralysis (very different)</div>
+This is a critical distinction: <strong>Water hemlock</strong> (<em>Cicuta</em> species — roots near streams) contains cicutoxin, a GABA-A antagonist causing violent, refractory convulsions — often fatal. It is considered one of the most violently toxic plants in North America. <strong>Poison hemlock</strong> (<em>Conium maculatum</em>) contains piperidine alkaloids that cause ascending flaccid paralysis (like curare) without seizures — Socrates' famous death. Treat water hemlock seizures with aggressive benzodiazepines and phenobarbital; intubation is often required. Cicutoxin does not respond well to standard antiepileptics at usual doses. Early recognition changes management significantly.
+<div class="exp-source">Schep LJ, et al. Clin Toxicol. 2009;47(8):771–781. Auerbach's Wilderness Medicine, 7th ed., Ch. 63. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 117.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Nerium_oleander_flowers_leaves.jpg?width=640',
+        imgFallback: '🌸', imgLabel: 'Nerium oleander — common ornamental shrub; all parts toxic with digoxin-like glycosides',
+        scenario: 'Mediterranean garden — bradycardia and visual changes',
+        text: 'A patient ate several oleander leaves from her garden and presents with HR 40 (junctional rhythm), nausea, yellow-green visual changes (xanthopsia), and K⁺ of 6.1 mEq/L. A serum digoxin level returns at 2.8 ng/mL. She denies taking digoxin. Why?',
+        choices: [
+          'She is taking digoxin secretly and is not being truthful about her medications',
+          'Oleander cardiac glycosides (oleandrin, neriine) cross-react with the standard digoxin immunoassay',
+          'Oleander is metabolized to digoxin by intestinal bacteria during absorption',
+          'This is a laboratory contamination error; redraw and repeat'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Plant cardiac glycosides cross-react with digoxin assays — treat with DigiFab regardless</div>
+Oleander contains <em>oleandrin</em> and <em>neriine</em>, which are cardiac glycosides structurally similar to digoxin. These compounds <strong>cross-react with the standard digoxin immunoassay</strong>, producing a measurable "digoxin level" even though the patient has never taken the drug. Other plants that do this: foxglove, lily of the valley, yellow oleander, and red squill. The treatment is the same: <strong>digoxin-specific Fab fragments (DigiFab)</strong>, titrated to clinical response (the measured level is unreliable for dosing calculations in plant glycoside toxicity). Hyperkalemia in this setting indicates severe toxicity and is an urgent indication for Fab.
+<div class="exp-source">Eddleston M, et al. QJM. 2000;93(6):381–388. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 64. Auerbach's Wilderness Medicine, 7th ed., Ch. 63.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Datura_stramonium_3.jpg?width=640',
+        imgFallback: '🌺', imgLabel: 'Datura stramonium (jimsonweed) — trumpet-shaped flowers; seeds contain tropane alkaloids',
+        scenario: 'Teen found wandering after eating seeds',
+        text: 'A 16-year-old is found disoriented in a field, describing "bugs on the walls." Exam: HR 154, T 38.7°C, skin dry and flushed, pupils 9 mm, and urinary retention. Friends confirm he was eating seeds from a "trumpet-shaped white flower." Which plant is most consistent?',
+        choices: [
+          'Psilocybin mushrooms — visual hallucinations and mild tachycardia are typical',
+          'Cannabis — paranoia and tachycardia; dry skin and urinary retention are not typical',
+          'Datura (jimsonweed) — tropane alkaloids cause classic anticholinergic toxidrome',
+          'Morning glory seeds — mild serotonergic effects; not this severe'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Datura is the prototype anticholinergic plant — the seeds are the most concentrated source of tropane alkaloids</div>
+<em>Datura stramonium</em> (jimsonweed, devil's trumpet) seeds and all plant parts contain <strong>atropine, scopolamine, and hyoscyamine</strong>. The presentation is a textbook anticholinergic toxidrome: hot/dry/flushed skin, mydriasis, tachycardia, urinary retention, and hallucinations (typically formed, visual — spiders, insects — unlike the geometric LSD patterns). Psilocybin does not cause tachycardia, hyperthermia, or dry skin. Morning glory seeds (ergine) have milder LSD-like effects. Management: supportive care, benzodiazepines for agitation, active cooling for hyperthermia; physostigmine can reverse the syndrome in selected cases.
+<div class="exp-source">Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 65. Auerbach's Wilderness Medicine, 7th ed., Ch. 63. Bania TC, et al. Acad Emerg Med. 1999;6(6):574–578.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Zigadenus_elegans.jpg?width=640',
+        imgFallback: '🌿', imgLabel: 'Zigadenus elegans (mountain death camas) — bulb resembles wild onion but has no garlic odor',
+        scenario: 'Spring mountain foraging — bradycardia after eating bulbs',
+        text: 'A forager harvests white-flowered bulbs from a high-altitude meadow thinking they are wild onion. After eating them, she develops bradycardia, hypotension, and profuse salivation. Her friend found both white-flowered and green-leaved bulb plants at the site. What is the fastest field test to tell death camas from wild onion?',
+        choices: [
+          'Compare flower color — wild onion has purple flowers, death camas has white flowers',
+          'Boil a fragment of the bulb — death camas turns red during cooking',
+          'Crush and smell — true wild onion has a strong garlic or onion odor; death camas has no onion scent whatsoever',
+          'Cut the leaf cross-section — wild onion leaves are hollow, death camas leaves are solid'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">The smell test is definitive in the field — no garlic smell means do NOT eat it</div>
+Wild onions (<em>Allium</em> species) contain organosulfur compounds that produce an unmistakable garlic/onion odor when the bulb, stem, or leaves are crushed. Death camas (<em>Zigadenus</em> and <em>Anticlea</em> species) lacks this odor entirely. <strong>If it doesn't smell like onion, do not eat it</strong>. Death camas contains steroidal alkaloids (zygadenine, veratrum alkaloids) that activate and then block sodium channels, causing bradycardia, hypotension, salivation, and hyporeflexia. No antidote exists; treatment is supportive (atropine for bradycardia, vasopressors for hypotension). Both plants may grow in the same meadow and bloom at the same time — flower color is less reliable than smell.
+<div class="exp-source">Auerbach's Wilderness Medicine, 7th ed., Ch. 63. Schep LJ, et al. Clin Toxicol. 2009;47(9):850–861. Panter KE, et al. J Nat Toxins. 1999;8(1):35–45.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Digitalis_purpurea2.jpg?width=640',
+        imgFallback: '🌸', imgLabel: 'Digitalis purpurea (foxglove) — leaves brewed into tea cause cardiac glycoside toxicity',
+        scenario: 'Garden tea — bradycardia and yellow vision',
+        text: 'An elderly woman brews tea from large leaves she finds in her garden (later confirmed to be Digitalis purpurea). She presents with bradycardia (HR 30), nausea, yellow-green visual disturbance, and serum potassium of 6.3 mEq/L. She takes no cardiac medications. What does the elevated potassium level indicate in this setting?',
+        choices: [
+          'She has underlying chronic kidney disease unrelated to the tea',
+          'She is dehydrated from vomiting, causing a pre-renal shift in potassium',
+          'Severe cardiac glycoside toxicity — Na/K-ATPase inhibition causes potassium to shift out of cells into serum',
+          'She is also taking a potassium-sparing diuretic she didn\'t mention'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Hyperkalemia in cardiac glycoside toxicity indicates severe Na/K-ATPase inhibition — it is a marker, not the cause</div>
+Na/K-ATPase normally pumps 3 Na⁺ out and 2 K⁺ into cells per cycle. When inhibited by cardiac glycosides, intracellular K⁺ can no longer be maintained — <strong>potassium shifts extracellularly</strong>, causing hyperkalemia. A K⁺ >5.5 mEq/L in acute digoxin (or plant glycoside) toxicity is a strong indicator of severe poisoning and is an independent indication for digoxin-specific Fab antibody fragments. Giving calcium gluconate is relatively contraindicated (risk of intracellular calcium overload). Treat with DigiFab; K⁺ will normalize as the toxin is bound. Do not treat the hyperkalemia with insulin/glucose first — address the underlying cause (the glycoside).
+<div class="exp-source">Antman EM, et al. N Engl J Med. 1990;323(25):1717–1722. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 64.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Aconitum_napellus01.jpg?width=640',
+        imgFallback: '💜', imgLabel: 'Aconitum napellus (monkshood/wolfsbane) — used in traditional herbal medicine; aconitine causes cardiac toxicity',
+        scenario: 'Traditional herbal remedy — cardiac arrhythmia with paresthesias',
+        text: 'A 44-year-old takes a traditional herbal preparation containing aconite root for arthritis. He develops immediate burning perioral numbness and tingling in his hands, then wide-complex ventricular tachycardia. Standard antiarrhythmic therapy has been ineffective. What is the key danger of aconitine poisoning?',
+        choices: [
+          'The perioral tingling indicates irreversible damage to cranial nerve V',
+          'Hepatotoxicity from aconitine metabolism — liver failure develops within 24 hours',
+          'Ventricular arrhythmias that are characteristically refractory to standard antiarrhythmic drugs',
+          'It crosses the blood-brain barrier and causes irreversible seizures in most cases'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Aconitine-induced arrhythmias are notoriously treatment-resistant — have ECMO/cardioversion ready</div>
+Aconitine activates voltage-gated sodium channels and prevents their inactivation, causing persistent depolarization of cardiac and neural tissue. Clinical hallmarks: <strong>immediate oral/lingual burning and numbness</strong> followed by cardiac arrhythmias — sinus bradycardia, supraventricular tachycardia, bidirectional ventricular tachycardia (similar to digoxin toxicity). The arrhythmias are frequently <em>refractory to amiodarone, lidocaine, and cardioversion</em>. There is no antidote. Treatment is supportive: benzodiazepines, antiarrhythmics empirically, and mechanical hemodynamic support (IABP or ECMO) in refractory cases. Perioral paresthesias are reversible. Aconitine preparations are used in traditional Chinese and Ayurvedic medicine — obtain a full supplement history in poisoned patients.
+<div class="exp-source">Chan TY. Medicine (Baltimore). 2009;88(3):141–150. Auerbach's Wilderness Medicine, 7th ed., Ch. 63. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 117.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Phytolacca_americana.jpg?width=640',
+        imgFallback: '🍇', imgLabel: 'Phytolacca americana (pokeweed) — dark purple berries; roots and leaves most toxic',
+        scenario: 'Backyard — toddler ate pokeweed berries',
+        text: 'A 2-year-old is brought in after eating an unknown number of pokeweed berries from a backyard plant. He is currently alert and asymptomatic. What is the expected clinical course and primary toxicity of pokeweed berry ingestion?',
+        choices: [
+          'Seizures — pokeweed has a potent convulsant alkaloid that acts rapidly',
+          'Cardiac toxicity — similar to digoxin; prophylactic atropine and monitoring are indicated',
+          'GI toxicity — nausea, vomiting, and diarrhea; serious systemic effects are uncommon with berry ingestion alone',
+          'No toxicity — only the root and leaves are poisonous; the ripe berries are safe in small amounts'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Pokeweed berries cause GI toxicity — roots and leaves cause systemic illness; ripe berries vary in toxicity</div>
+Pokeweed (<em>Phytolacca americana</em>) toxicity varies by plant part. The <strong>berries</strong> are the least toxic portion (though not truly safe), typically causing nausea, vomiting, and diarrhea when ingested in small amounts. The <strong>roots</strong> are the most toxic — they contain phytolaccatoxin and phytolaccigenin, which cause GI hemorrhage, severe hematologic effects, and rarely death. Green, unripe berries are more toxic than ripe dark berries. Systemic toxicity (bone marrow suppression, hemolysis) has been reported but is uncommon from berry ingestion alone. Management: activated charcoal if recent large ingestion, antiemetics, supportive care, and close monitoring. The plant also causes contact dermatitis.
+<div class="exp-source">Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 117. Auerbach's Wilderness Medicine, 7th ed., Ch. 63. Roberge RJ, et al. Ann Emerg Med. 1986;15(4):470–473.</div>`
+      }
+    ]
+  }
+
+];
+
+// ─── STATE ───────────────────────────────────
+let state = { currentQuizIdx: null, currentQ: 0, answers: [], answered: false };
+const scores = {};
+
+function init() { renderHome(); }
+
+function renderHome() {
+  document.getElementById('home').style.display = 'block';
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  const grid = document.getElementById('quizGrid');
+  grid.innerHTML = QUIZZES.map((q, i) => {
+    const done = scores[q.id];
+    const pct  = done ? Math.round((done.score / done.total) * 100) : null;
+    return `<div class="quiz-card" style="--accent-color:${q.color}" onclick="startQuiz(${i})">
+      <div class="card-icon">${q.icon}</div>
+      <h3>${q.title}</h3>
+      <p>${q.description}</p>
+      <div class="card-meta">
+        <span class="badge">${q.questions.length} Questions</span>
+        ${done ? `<span class="badge done">✓ ${pct}% (${done.score}/${done.total})</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function startQuiz(idx) {
+  state.currentQuizIdx = idx;
+  state.currentQ = 0;
+  state.answers = [];
+  state.answered = false;
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const quiz  = QUIZZES[state.currentQuizIdx];
+  const q     = quiz.questions[state.currentQ];
+  const total = quiz.questions.length;
+  const idx   = state.currentQ;
+
+  document.getElementById('progressBar').style.width = `${(idx / total) * 100}%`;
+  document.getElementById('qCounter').textContent    = `${idx + 1} / ${total}`;
+
+  document.getElementById('imgWrap').innerHTML = `
+    <img src="${q.img}" alt="${q.imgLabel}"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="img-fallback" style="display:none">
+      <span class="fb-icon">${q.imgFallback}</span><span>${q.imgLabel}</span>
+    </div>`;
+
+  document.getElementById('qScenario').textContent = q.scenario;
+  document.getElementById('qText').textContent     = q.text;
+
+  const letters = ['A','B','C','D'];
+  document.getElementById('choices').innerHTML = q.choices.map((c, i) =>
+    `<button class="choice-btn" onclick="selectAnswer(${i})" id="choice${i}">
+       <span class="opt-letter">${letters[i]}</span><span>${c}</span>
+     </button>`).join('');
+
+  const expEl = document.getElementById('explanation');
+  expEl.style.display = 'none';
+  expEl.innerHTML = '';
+  const nextBtn = document.getElementById('btnNext');
+  nextBtn.style.display = 'none';
+  nextBtn.textContent = (idx === total - 1) ? 'See Results →' : 'Next Question →';
+  state.answered = false;
+}
+
+function selectAnswer(chosen) {
+  if (state.answered) return;
+  state.answered = true;
+  const quiz    = QUIZZES[state.currentQuizIdx];
+  const q       = quiz.questions[state.currentQ];
+  const correct = q.correct;
+  const isRight = chosen === correct;
+  state.answers.push({ chosen, correct, isRight });
+
+  document.querySelectorAll('.choice-btn').forEach((btn, i) => {
+    btn.classList.add('locked');
+    if (i === correct) btn.classList.add('correct');
+    if (i === chosen && !isRight) btn.classList.add('wrong');
+  });
+
+  const expEl = document.getElementById('explanation');
+  expEl.className = `explanation ${isRight ? 'correct-exp' : 'wrong-exp'}`;
+  expEl.innerHTML = `<div style="font-weight:700;font-size:.9rem;margin-bottom:.4rem">${isRight ? '✓ Correct' : '✗ Incorrect'}</div>${q.explanation}`;
+  expEl.style.display = 'block';
+  document.getElementById('btnNext').style.display = 'block';
+}
+
+function nextQuestion() {
+  const quiz = QUIZZES[state.currentQuizIdx];
+  state.currentQ++;
+  if (state.currentQ >= quiz.questions.length) showResults();
+  else renderQuestion();
+}
+
+function showResults() {
+  const quiz  = QUIZZES[state.currentQuizIdx];
+  const score = state.answers.filter(a => a.isRight).length;
+  const total = quiz.questions.length;
+  const pct   = Math.round((score / total) * 100);
+  scores[quiz.id] = { score, total };
+
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('scoreDen').textContent = `/ ${total}`;
+
+  const color = pct >= 80 ? 'var(--correct)' : pct >= 60 ? 'var(--warn)' : 'var(--wrong)';
+  const ring  = document.getElementById('scoreRing');
+  ring.style.borderColor = color;
+  ring.style.background  = `${color}18`;
+
+  const [, label, sub] = [
+    [90,'Excellent!','Outstanding — ready for the field.'],
+    [75,'Well done!','Strong knowledge — review any missed items.'],
+    [50,'Good effort','Review the explanations and retry.'],
+    [0, 'Keep studying','Review the content and try again.']
+  ].find(([min]) => pct >= min);
+  document.getElementById('scoreLabel').textContent = `${pct}% — ${label}`;
+  document.getElementById('scoreSub').textContent   = sub;
+
+  const letters = ['A','B','C','D'];
+  document.getElementById('reviewList').innerHTML = state.answers.map((a, i) => {
+    const q = quiz.questions[i];
+    return `<div class="review-item ${a.isRight ? 'r-correct' : 'r-wrong'}">
+      <div class="r-q"><strong>Q${i+1}:</strong> ${q.text.substring(0,90)}${q.text.length>90?'…':''}</div>
+      ${!a.isRight ? `<div class="r-ans wrong">Your answer: ${letters[a.chosen]}. ${q.choices[a.chosen]}</div>` : ''}
+      <div class="r-ans correct">Correct: ${letters[a.correct]}. ${q.choices[a.correct]}</div>
+    </div>`;
+  }).join('');
+}
+
+function goHome() {
+  document.getElementById('home').style.display = 'block';
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  renderHome();
+}
+function retryQuiz() { startQuiz(state.currentQuizIdx); }
+
+init();
+</script>
+</body>
+</html>
