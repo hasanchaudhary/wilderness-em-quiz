@@ -100,7 +100,7 @@
 <div id="home">
   <div class="home-intro">
     <h2>Choose a Quiz Module</h2>
-    <p>5 modules · 5 questions each · difficulty increases with each question</p>
+    <p>5 modules · 7 questions each · Q1–2 intern · Q3 PGY2 · Q4–5 PGY3 · Q6–7 attending</p>
   </div>
   <div class="quiz-grid" id="quizGrid"></div>
 </div>
@@ -144,7 +144,7 @@ const QUIZZES = [
 
   // ══════════════════════════════════════════
   // QUIZ 1 — TOXIDROMES & POISONINGS
-  // Q1 intern → Q5 sharp PGY3
+  // Q1–2 intern · Q3 PGY2 · Q4–5 PGY3 · Q6–7 attending
   // ══════════════════════════════════════════
   {
     id: 'toxidromes', title: 'Toxidromes & Poisonings', icon: '☠️', color: '#f43f5e',
@@ -218,7 +218,7 @@ Linezolid inhibits MAO, increasing synaptic serotonin. Combined with any seroton
         img: 'https://commons.wikimedia.org/wiki/Special:FilePath/12leadECG.jpg?width=640',
         imgFallback: '🫀', imgLabel: '12-lead ECG — wide QRS in tricyclic antidepressant overdose',
         scenario: 'Overnight OD — wide-complex ECG and hypotension',
-        text: 'A 31-year-old is brought in after taking her entire bottle of amitriptyline. She is obtunded, BP 72/44, HR 136. ECG shows QRS of 148 ms and a prominent R wave in lead aVR. The nurse pushes lidocaine 100 mg IV for "ventricular tachycardia." What is the most appropriate treatment, and why was lidocaine potentially counterproductive?',
+        text: 'A 31-year-old is brought in after taking her entire bottle of amitriptyline. She is obtunded, BP 72/44, HR 136. ECG shows QRS of 148 ms and a prominent R wave in lead aVR. What is the most appropriate treatment for the QRS widening and hemodynamic instability?',
         choices: [
           'Magnesium sulfate 2 g IV',
           'Sodium bicarbonate 1–2 mEq/kg IV',
@@ -230,12 +230,45 @@ Linezolid inhibits MAO, increasing synaptic serotonin. Combined with any seroton
 TCA toxicity works by: (1) sodium channel blockade → QRS widening, (2) alpha-1 blockade → hypotension, (3) anticholinergic effects. <strong>Sodium bicarbonate</strong> works two ways: alkalinization (pH 7.50–7.55) reduces TCA binding to Na channels, AND the sodium load overcomes the blocked channels. A QRS ≥100 ms or R wave in aVR ≥3 mm mandates bicarb. Lidocaine is itself a Class IB sodium channel blocker — it can worsen QRS widening and conduction in TCA overdose. Magnesium addresses QT/torsades, not QRS widening.
 <div class="exp-source">Liebelt EL, et al. Ann Emerg Med. 1995;26(2):195–201. Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 71.</div>`
       }
+,
+      {
+        img: 'https://images.pexels.com/photos/3683041/pexels-photo-3683041.jpeg?auto=compress&cs=tinysrgb&w=800',
+        imgFallback: '💊', imgLabel: 'Aspirin tablets — salicylate toxicity has a critical airway management trap',
+        scenario: 'Intentional ingestion — altered mental status, visible hyperventilation',
+        text: 'A 19-year-old took a large quantity of aspirin. She has tinnitus, is breathing at RR 38, and ABG shows pH 7.47, pCO₂ 18, HCO₃ 12. She is now becoming increasingly difficult to arouse. The team plans to intubate for airway protection. What is the most critical risk of this plan?',
+        choices: [
+          'Intubation is safe and appropriate in a deteriorating salicylate poisoning',
+          'RSI should be avoided; use ketamine alone to preserve respiratory drive',
+          'Intubation eliminates the compensatory hyperventilation; if ventilator settings fail to match her pre-intubation minute ventilation, the resulting CO₂ rise causes rapid cardiovascular collapse',
+          'Intubation requires bicarbonate pretreatment to prevent post-intubation acidosis'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Salicylate poisoning + intubation = one of toxicology's most dangerous decisions</div>
+Salicylate toxicity causes a mixed anion gap metabolic acidosis and compensatory respiratory alkalosis. The patient's hyperventilation is <em>life-saving</em> — it keeps blood pH up and keeps salicylate ionized in blood (less CNS penetration). Intubation removes that compensation. <strong>If the ventilator does not precisely match her pre-intubation minute ventilation</strong> (often 18–22 L/min — technically difficult), even a brief rise in pCO₂ causes rapid intracellular acidosis, CNS salicylate accumulation, and cardiovascular collapse. If intubation is unavoidable, pre-treat with bicarbonate, use the highest tolerable minute ventilation, and plan for hemodialysis. Hemodialysis is the definitive treatment for severe salicylate toxicity.
+<div class="exp-source">Thurston JH, et al. J Clin Invest. 1970;49(1):2345–2352. Palatnick W, Tenenbein M. Ann Emerg Med. 1991;20(10):1088–1093.</div>`
+      },
+      {
+        img: 'https://images.pexels.com/photos/7089392/pexels-photo-7089392.jpeg?auto=compress&cs=tinysrgb&w=800',
+        imgFallback: '🩺', imgLabel: 'Endoscopy procedure — benzocaine topical spray can cause acquired methemoglobinemia',
+        scenario: 'Endoscopy suite — sudden cyanosis unresponsive to 100% oxygen',
+        text: 'Benzocaine topical spray is used for a patient\'s throat before upper endoscopy. She develops sudden cyanosis that does not respond to 100% O₂ by face mask. SpO₂ reads 84%. Co-oximetry shows methemoglobin of 34%. What is the correct treatment, and what key patient factor must be confirmed first?',
+        choices: [
+          'Sodium thiosulfate IV',
+          'Methylene blue 1–2 mg/kg IV after checking G6PD status — in G6PD-deficient patients it causes hemolysis and is ineffective',
+          'Methylene blue regardless of any patient factors',
+          'Hyperbaric oxygen'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Methylene blue is the antidote — but it fails in G6PD deficiency and can cause hemolytic crisis</div>
+Methemoglobin cannot carry oxygen — acquired methemoglobinemia from benzocaine (or dapsone, nitrites, certain antibiotics) is an emergency. <strong>Methylene blue 1–2 mg/kg IV</strong> is the antidote: it acts as an electron carrier to reduce methemoglobin back to hemoglobin. Critical exception: <em>G6PD-deficient patients</em> lack the NADPH required for methylene blue to work — it will instead cause hemolytic anemia without fixing the methemoglobin. In G6PD deficiency, use exchange transfusion or ascorbic acid (less effective). Note: pulse oximetry reads methemoglobin as ~85% regardless of severity — co-oximetry is diagnostic.
+<div class="exp-source">Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 127. Ash-Bernal R, et al. Ann Intern Med. 2004;141(4):273–282.</div>`
+      }
     ]
   },
 
   // ══════════════════════════════════════════
   // QUIZ 2 — ENVENOMATIONS (MARINE + TERRESTRIAL)
-  // Q1 intern → Q5 sharp PGY3
+  // Q1–2 intern · Q3 PGY2 · Q4–5 PGY3 · Q6–7 attending
   // ══════════════════════════════════════════
   {
     id: 'envenomations', title: 'Envenomations', icon: '🐍', color: '#0ea5e9',
@@ -275,19 +308,19 @@ Suction devices recover <0.04% of injected venom. Incision causes tissue damage 
       },
       {
         img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Latrodectus_mactans.jpg?width=640',
-        imgFallback: '🕷️', imgLabel: 'Black widow spider — red hourglass marking on glossy black abdomen',
-        scenario: 'Camping — sudden severe abdominal rigidity after outdoor latrine visit',
-        text: 'A 52-year-old woman develops severe cramping abdominal pain, board-like rigidity of the abdomen and thighs, drenching diaphoresis, and BP 192/108 one hour after feeling a sharp pinprick while using an outdoor pit toilet. A surgeon says "This looks like peritonitis — she needs the OR." What is the most important immediate step?',
+        imgFallback: '🕷️', imgLabel: 'Black widow spider — alpha-latrotoxin causes massive neurotransmitter release',
+        scenario: 'Camping — confirmed envenomation, refractory pain despite initial treatment',
+        text: 'The EM team correctly identifies the envenomation syndrome and holds surgery. The 52-year-old receives IV hydromorphone 1 mg and lorazepam 2 mg but still rates pain 8/10, has persistent muscle rigidity, and BP remains 204/118. A resident recommends IV calcium gluconate as the next step. How should you respond?',
         choices: [
-          'Proceed to the OR',
-          'Obtain an emergent abdominal CT to evaluate for bowel perforation before surgery',
-          'Inspect the bite site and reconsider the diagnosis before proceeding to the OR',
-          'Give IV antibiotics empirically for suspected intra-abdominal sepsis'
+          'Give IV calcium gluconate',
+          'Escalate opioids and benzodiazepines; antivenin is reserved for refractory severe cases',
+          'Give calcium gluconate to address the hypertension before escalating analgesia',
+          'Give IV magnesium sulfate'
         ],
-        correct: 2,
-        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Arachnid envenomation is a classic surgical impostor — "board-like abdomen" from muscle spasm, not peritonitis</div>
-Black widow venom (alpha-latrotoxin) triggers massive neurotransmitter release, causing severe muscle spasm — not peritoneal inflammation. The resulting abdominal rigidity precisely mimics acute abdomen, appendicitis, or peritonitis. Critical history clues: outdoor setting, sudden onset following a pinprick sensation, no fever, no rebound tenderness. Look for two small fang puncture marks. Management: IV opioids and benzodiazepines for pain and spasm. Antivenin (horse serum-derived) is reserved for severe cases, the elderly, or cardiovascular instability.
-<div class="exp-source">Auerbach's Wilderness Medicine, 7th ed., Ch. 47. Clark RF, et al. Ann Emerg Med. 1992;21(7):782–787.</div>`
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Calcium gluconate is historical folklore — current evidence supports opioids + benzodiazepines, with antivenin for refractory cases</div>
+Calcium gluconate was historically recommended for black widow envenomation based on case reports suggesting muscle cramp relief, but randomized trials showed no benefit over opioids. <strong>Current standard:</strong> IV opioids and benzodiazepines are first-line. Antivenin (Merck Latrodectus mactans antivenin, equine-derived) is highly effective and indicated for: pain refractory to adequate analgesia, hypertensive crisis, cardiovascular instability, pregnancy, or extreme age. Requires skin testing for horse protein allergy before administration. Treatment with antivenin typically produces rapid dramatic relief.
+<div class="exp-source">Clark RF, et al. Ann Emerg Med. 1992;21(7):782–787. Isbister GK, et al. Ann Emerg Med. 2014;63(5):608–617.</div>`
       },
       {
         img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Coral_snake.jpg?width=640',
@@ -321,12 +354,45 @@ The eastern coral snake delivers a postsynaptic neurotoxin that blocks acetylcho
 Arizona bark scorpion (Centruroides sculpturatus) is the only US scorpion capable of causing death, primarily in young children. Venom causes uncontrolled sodium channel activation, producing the characteristic neuromuscular syndrome: roving eye movements, hypersalivation, uncontrolled limb movements, and respiratory distress. Anascorp (equine-derived F(ab')₂ antivenom) is FDA-approved for this and resolves symptoms rapidly. Benzodiazepines help with symptom control but do not address the underlying toxin. Supportive care alone may be appropriate in mild adult cases but is inadequate for this severity in a toddler.
 <div class="exp-source">Boyer LV, et al. N Engl J Med. 2009;360(20):2090–2098. Auerbach's Wilderness Medicine, 7th ed., Ch. 50.</div>`
       }
+,
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Synanceia_verrucosa.jpg?width=640',
+        imgFallback: '🐡', imgLabel: 'Stonefish (Synanceia verrucosa) — world\'s most venomous fish; perfect reef camouflage',
+        scenario: 'Indo-Pacific reef — stepped on a rock in shallow water',
+        text: 'A snorkeler in Bali steps on what appears to be a barnacle-covered rock and develops immediate excruciating foot pain with rapid swelling and skin discoloration. Stonefish envenomation is suspected. Hot water immersion at 45°C is started and provides partial relief. Is there a specific antivenom, and where is it available?',
+        choices: [
+          'No specific antivenom exists for any fish envenomation',
+          'Stonefish antivenom exists and is effective, but is available only through Australian hospitals and poison centers',
+          'Stonefish antivenom is widely available at all hospitals in reef-region countries',
+          'Antivenom is available but not recommended due to high anaphylaxis risk'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Stonefish antivenom exists (unique among fish venoms) but availability outside Australia is limited</div>
+Among the many marine fish capable of envenomation, stonefish is uniquely distinguished by having a specific antivenom — Commonwealth Serum Laboratories (CSL) Stonefish Antivenom. It is most reliably available through Australian hospitals and the Australian Poison Information Centre. Outside Australia, access may require urgent contact with international poison centers or medical toxicologists. Initial field management is always <strong>hot water immersion (~45°C)</strong>, which denatures the heat-labile venom proteins and provides significant analgesia. Wound care, tetanus prophylaxis, and spine removal follow. Antivenom is indicated for severe systemic effects or pain refractory to immersion and analgesics.
+<div class="exp-source">Auerbach's Wilderness Medicine, 7th ed., Ch. 74. Currie BJ. Toxicon. 2014;78:131–136.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Heloderma_suspectum.jpg?width=640',
+        imgFallback: '🦎', imgLabel: 'Gila monster (Heloderma suspectum) — venom delivered by chewing, not fang injection',
+        scenario: 'Sonoran desert — lizard firmly clamped and chewing on hand',
+        text: 'A wildlife photographer is bitten by a Gila monster that remains clamped and actively chewing on his hand. His colleague grabs the lizard and pulls hard but cannot dislodge it. What is the correct removal technique, and why does the chewing behavior matter?',
+        choices: [
+          'Immerse the hand and lizard in cold water to cause jaw relaxation',
+          'Pry the jaw open with a flat instrument or pour water into the snout; venom is delivered by chewing and grooming it into the wound, not by fang injection',
+          'Inject epinephrine near the bite site to cause vasospasm and jaw release',
+          'Leave it attached until it releases spontaneously within 5–10 minutes'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Gila monsters deliver venom by chewing — prolonged contact means more venom; prying or water on the snout causes release</div>
+Unlike pit vipers, Gila monsters lack hollow fangs for injection. Venom flows from glands along grooves in the lower jaw teeth and is worked into the wound by chewing. The longer attachment persists, the more venom is delivered. Effective removal: (1) Use a flat instrument (pry bar, credit card) to open the jaw. (2) Pour water into the nasal passages — the lizard typically releases to breathe. (3) Submerging in water also works. <strong>Pulling the lizard off causes deeper lacerations</strong> and may leave teeth embedded. Management post-bite is supportive — no specific antivenom is available in the US. Major effects include hypotension, angioedema, and coagulopathy.
+<div class="exp-source">Auerbach's Wilderness Medicine, 7th ed., Ch. 57. Cantrell FL. Clin Toxicol. 2003;41(5):613–616.</div>`
+      }
     ]
   },
 
   // ══════════════════════════════════════════
   // QUIZ 3 — ANTIDOTES CHALLENGE
-  // Q1 intern → Q5 sharp PGY3
+  // Q1–2 intern · Q3 PGY2 · Q4–5 PGY3 · Q6–7 attending
   // ══════════════════════════════════════════
   {
     id: 'antidotes', title: 'Antidotes Challenge', icon: '💉', color: '#a855f7',
@@ -412,12 +478,45 @@ Sodium nitrite works by deliberately inducing methemoglobinemia, which scavenges
 During CCB toxicity, cardiac myocytes are metabolically stressed. High-dose insulin preferentially shifts myocardial fuel utilization toward glucose (away from fatty acids) and directly improves contractility through calcium-independent mechanisms. HIET dose: <strong>1 unit/kg IV bolus</strong>, then 0.5–1 unit/kg/hr infusion. Critical: monitor glucose every 15–30 minutes — profound hypoglycemia is the main risk. Replace glucose aggressively. If HIET fails, consider lipid emulsion (Intralipid) and ECMO bridge.
 <div class="exp-source">Engebretsen KM, et al. Clin Toxicol. 2011;49(4):277–283. Holger JS, et al. Clin Toxicol. 2011;49(4):277–283.</div>`
       }
+,
+      {
+        img: 'https://images.pexels.com/photos/4386465/pexels-photo-4386465.jpeg?auto=compress&cs=tinysrgb&w=800',
+        imgFallback: '💉', imgLabel: 'IV medication preparation — lipid emulsion therapy for local anesthetic systemic toxicity',
+        scenario: 'Nerve block — seizure and cardiac arrest 90 seconds after injection',
+        text: 'A 62-year-old receives a brachial plexus nerve block with bupivacaine for shoulder surgery. Ninety seconds after injection she seizes, then goes into wide-complex cardiac arrest. Standard ACLS is started. Which additional treatment, not in standard ACLS, should be administered immediately?',
+        choices: [
+          'Sodium bicarbonate 1 mEq/kg IV',
+          'Intralipid (20% lipid emulsion) 1.5 mL/kg IV bolus',
+          'Epinephrine 1 mg IV — standard ACLS dose is appropriate here',
+          'Calcium gluconate 1 g IV'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">LAST (local anesthetic systemic toxicity) — lipid emulsion is the specific rescue therapy</div>
+Bupivacaine is the most cardiotoxic local anesthetic. When systemically absorbed (vascular injection, absorption from highly vascular tissue), it causes sodium and potassium channel blockade leading to refractory cardiac arrest. <strong>Intralipid (20% lipid emulsion) 1.5 mL/kg IV bolus</strong>, then 0.25 mL/kg/min infusion, is the treatment — the "lipid sink" hypothesis proposes that lipid sequesters bupivacaine away from cardiac tissue. ACLS modifications: avoid vasopressin; reduce epinephrine to ≤1 mcg/kg (full dose epinephrine may impair lipid rescue efficacy); avoid propofol as lipid substitute (lacks rescue properties). Call the nearest ECMO center early.
+<div class="exp-source">Neal JM, et al. Reg Anesth Pain Med. 2018;43(2):113–123. Weinberg GL. Anesthesiology. 2012;117(1):180–187.</div>`
+      },
+      {
+        img: 'https://images.pexels.com/photos/4047142/pexels-photo-4047142.jpeg?auto=compress&cs=tinysrgb&w=800',
+        imgFallback: '💊', imgLabel: 'Medication consultation — physostigmine has critical contraindications in toxicology',
+        scenario: 'Festival — anticholinergic toxidrome refractory to benzodiazepines, unclear history',
+        text: 'A 21-year-old at a festival has classic anticholinergic toxidrome. After benzodiazepines, he remains severely agitated and his temperature is rising toward 40°C. Toxicology suggests physostigmine. A resident says "We cannot use it if TCA coingestion is possible." Why does this matter?',
+        choices: [
+          'The resident is incorrect — physostigmine is safe regardless of coingestants',
+          'TCA coingestion would make physostigmine less effective, wasting time',
+          'Physostigmine in TCA toxicity can precipitate bradycardia, heart block, and seizures — if TCA coingestion cannot be excluded by history and a normal ECG (narrow QRS, normal QTc), physostigmine is contraindicated',
+          'Physostigmine is contraindicated only if the patient is already bradycardic'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Physostigmine + TCA = potentially fatal bradycardia and seizures — always get an ECG first</div>
+Physostigmine inhibits acetylcholinesterase, reversing anticholinergic toxidrome with dramatic effect. However, in TCA coingestion (also anticholinergic), the sudden cholinergic surge on a myocardium already sensitized by sodium channel blockade can cause bradycardia, AV block, asystole, and seizures. <strong>Before giving physostigmine:</strong> (1) Obtain ECG — wide QRS or prolonged QTc suggests TCA; do not give physostigmine. (2) Take detailed history. (3) Contraindicated also in peripheral vascular disease, reactive airway disease, or bowel/bladder obstruction. If the ECG is normal and history excludes TCAs, physostigmine is highly effective and dramatically reverses anticholinergic delirium.
+<div class="exp-source">Watkins JW, et al. J Med Toxicol. 2015;11(2):234–241. Burns MJ, et al. Ann Emerg Med. 2000;35(4):374–381.</div>`
+      }
     ]
   },
 
   // ══════════════════════════════════════════
   // QUIZ 4 — WILDERNESS PLANT TOXINS
-  // Q1 intern → Q5 sharp PGY3
+  // Q1–2 intern · Q3 PGY2 · Q4–5 PGY3 · Q6–7 attending
   // ══════════════════════════════════════════
   {
     id: 'plants', title: 'Wilderness Plant Toxins', icon: '🌿', color: '#f59e0b',
@@ -503,12 +602,45 @@ Oleander contains oleandrin and neriine — cardiac glycosides that cause the sa
 Aconitine (from Aconitum species — monkshood, wolfsbane) persistently activates voltage-gated sodium channels, causing repetitive depolarization and refractory ventricular arrhythmias. The hallmark presentation is burning perioral and extremity paresthesias followed by wide-complex arrhythmias that are pharmacologically refractory. Treatment: electrical cardioversion as needed; magnesium sulfate has some evidence. Standard sodium channel blockers (lidocaine, amiodarone) are often ineffective. ECMO has been used as a bridge to drug elimination. Poison control consultation is essential — this is a rare but potentially fatal poisoning.
 <div class="exp-source">Chan TY. Ann Emerg Med. 2009;53(3):377–380. Auerbach's Wilderness Medicine, 7th ed., Ch. 63.</div>`
       }
+,
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Zigadenus_elegans.jpg?width=640',
+        imgFallback: '🌾', imgLabel: 'Death camas (Anticlea elegans) — white flowers; often confused with wild onion in spring meadows',
+        scenario: 'Spring mountain foraging — bradycardia after eating foraged bulbs',
+        text: 'A forager harvests white-bulbed plants with white star-shaped flowers from a high-altitude meadow, believing them to be wild onion. After eating them, she develops bradycardia (HR 42), hypotension, and profuse salivation. Zygadenus (death camas) is suspected. What is the most reliable field test to differentiate death camas from wild onion before eating?',
+        choices: [
+          'The leaf color — death camas has pale green leaves, wild onion has darker green leaves',
+          'The smell — wild onion has a strong distinctive onion odor; death camas has no onion smell',
+          'The flower color — wild onion flowers are pink; death camas flowers are always white',
+          'The stem — wild onion has a hollow stem; death camas has a solid round stem'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">The smell test is the most reliable field test — no onion smell means don't eat it</div>
+Death camas (Anticlea/Zigadenus elegans) contains steroidal alkaloids (zygadenine, protoveratrine) that cause cholinergic-like toxicity: bradycardia, hypotension, salivation, diaphoresis, and muscle weakness. It closely resembles wild onion in appearance — same habitat, similar bulbs and white flowers. <strong>Wild onion always smells strongly of onion or garlic</strong> when a leaf is crushed; death camas has no odor. This single field test is highly reliable. Management: atropine for bradycardia, IV fluids for hypotension, supportive care. No specific antidote; symptoms typically resolve in 24–48 hours.
+<div class="exp-source">Auerbach's Wilderness Medicine, 7th ed., Ch. 63. Panter KE, et al. J Anim Sci. 1987;64(4):1044–1049.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Phytolacca_americana.jpg?width=640',
+        imgFallback: '🌿', imgLabel: 'Pokeweed (Phytolacca americana) — all parts toxic; root contains highest concentration',
+        scenario: 'Backyard foraging — two family members with very different presentations',
+        text: 'A mother and her 3-year-old present after both ate pokeweed from their yard. The child ate ripe berries; the mother prepared a tea from the root. The child has vomiting and diarrhea. The mother is more severely ill: HR 130, BP 84/54, diaphoresis, and bloody diarrhea. Why are the presentations so different?',
+        choices: [
+          'Children are more sensitive to all plant toxins — the child would be expected to be sicker',
+          'The berries were unripe, causing more toxicity in the child than ripe berries would',
+          'The root contains the highest concentration of phytolaccatoxin; ripe berries cause primarily GI toxicity, while root ingestion causes severe systemic illness',
+          'The mother ingested a larger volume — this is simply a dose-dependent effect'
+        ],
+        correct: 2,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Pokeweed toxicity varies dramatically by plant part — root > green berries > ripe berries</div>
+All parts of pokeweed (Phytolacca americana) contain toxic saponins (phytolaccatoxin, phytolaccigenin), but the root is most concentrated. Root ingestion causes severe systemic illness: profuse vomiting, bloody diarrhea, hypotension, bradycardia, and potentially bone marrow suppression with altered lymphocyte morphology ("pokeweed mitogen" effect). Ripe purple berries cause primarily GI toxicity in small amounts. <em>Important:</em> cooking does not fully destroy the toxins (unlike many other plants). Root tea was historically used as folk medicine — these cases are still reported. Management is supportive; fluid resuscitation, antiemetics, and close monitoring for systemic effects.
+<div class="exp-source">Goldfrank's Toxicologic Emergencies, 11th ed., Ch. 117. Roberge RJ, et al. Ann Emerg Med. 1986;15(4):470–473.</div>`
+      }
     ]
   },
 
   // ══════════════════════════════════════════
   // QUIZ 5 — ENVIRONMENTAL EMERGENCIES
-  // Q1 intern → Q5 sharp PGY3
+  // Q1–2 intern · Q3 PGY2 · Q4–5 PGY3 · Q6–7 attending
   // ══════════════════════════════════════════
   {
     id: 'environmental', title: 'Environmental Emergencies', icon: '🏔️', color: '#6366f1',
@@ -593,6 +725,39 @@ Hypothermic cardiac arrest from cold-water submersion in children is one of the 
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Reverse triage for lightning: the "dead" are more salvageable than the walking wounded</div>
 In conventional MCI, pulseless patients are "expectant." Lightning inverts this: the walking and talking survivors have already survived their arrhythmia and compensated. Pulseless victims often have <em>structurally normal hearts</em> thrown into VF or asystole by the electrical current — a mechanism that responds well to standard ACLS with high survival rates if treated promptly. Lightning does NOT cause sustained myocardial damage in the same way trauma does. Additional facts: (1) Lightning does not leave a residual charge — victims are safe to touch immediately. (2) The primary killer is respiratory arrest leading to cardiac arrest — early ventilation is key.
 <div class="exp-source">Cooper MA, et al. In: Auerbach's Wilderness Medicine, 7th ed., Ch. 5. Davis C, et al. Emerg Med Australas. 2014;26(4):404–410.</div>`
+      }
+,
+      {
+        img: 'https://images.pexels.com/photos/1366909/pexels-photo-1366909.jpeg?auto=compress&cs=tinysrgb&w=800',
+        imgFallback: '🏔️', imgLabel: 'High-altitude terrain — HAPE and HACE are distinct emergencies with different treatments',
+        scenario: 'High camp — severe dyspnea with frothy pink sputum',
+        text: 'A 38-year-old climber at 4,800 m develops severe progressive dyspnea over 6 hours, produces frothy pink-tinged sputum, has bilateral crackles to mid-lung on auscultation, and SpO₂ of 66%. He is at a high camp with no immediate descent possible. A teammate has both nifedipine and dexamethasone. Which is the more appropriate initial pharmacological treatment for this specific condition?',
+        choices: [
+          'Dexamethasone 8 mg',
+          'Nifedipine 30 mg extended-release',
+          'Either medication is equally effective for altitude illness',
+          'Acetazolamide 250 mg'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">HAPE is driven by pulmonary vasoconstriction — nifedipine reduces pulmonary artery pressure; dexamethasone treats HACE, not HAPE</div>
+High altitude pulmonary edema (HAPE) is the leading cause of death from altitude illness. It is caused by excessive hypoxic pulmonary vasoconstriction leading to high-permeability pulmonary edema — <em>not</em> inflammation. <strong>Nifedipine 30 mg ER</strong> (or another calcium channel blocker/phosphodiesterase inhibitor like sildenafil or tadalafil) reduces pulmonary artery pressure and is specifically indicated for HAPE. Dexamethasone is the treatment for HACE (cerebral edema — altered mental status, ataxia) — it does not address pulmonary vasoconstriction. Descent + supplemental O₂ are always priorities; nifedipine is the pharmacological bridge when immediate descent is impossible.
+<div class="exp-source">Luks AM, et al. High Alt Med Biol. 2017;18(2):77–121. Maggiorini M, et al. JAMA. 2006;295(21):2492–2500.</div>`
+      },
+      {
+        img: 'https://commons.wikimedia.org/wiki/Special:FilePath/Frostbite.jpg?width=640',
+        imgFallback: '🧊', imgLabel: 'Frostbite injury — irreversible tissue loss is preventable with rapid correct rewarming',
+        scenario: 'Expedition climber — white, waxy digits, never rewarmed in the field',
+        text: 'A mountain climber reaches the ED 3 hours after frostbite injury to all 10 fingers. Digits are white, waxy, and insensate. No blisters have formed yet. The fingers were never rewarmed in the field. What is the most important immediate management principle?',
+        choices: [
+          'Rub the fingers vigorously between your palms to restore circulation',
+          'Rapidly rewarm in circulating water at 37–40°C for 15–30 minutes; do not rub or massage; tPA should be considered for severe cases presenting within 24 hours if tissue has not yet been rewarmed',
+          'Delay rewarming until the patient can be guaranteed not to be re-exposed to freezing',
+          'Apply chemical heat packs directly to the fingers for rapid warming'
+        ],
+        correct: 1,
+        explanation: `<div style="font-weight:700;margin-bottom:.4rem">Rapid water rewarming saves tissue — rubbing, heat packs, and re-freeze all worsen outcomes</div>
+Frostbite management: (1) <strong>Never rub</strong> — ice crystals in cells lacerate tissue. (2) <strong>Rapid rewarming in 37–40°C circulating water</strong> for 15–30 minutes is standard — temperatures above 42°C cause burns. (3) Do not use dry heat or chemical heat packs — uncontrolled temperatures. (4) The "refreezing injury" concern is real but applies to walking distances, not ED care. (5) <strong>tPA (tissue plasminogen activator) or iloprost</strong> should be considered for severe frostbite (digits threatened) presenting within 24 hours if tissue has not yet been rewarmed — these drugs reduce amputation rates by treating the microvascular thrombosis. Early burn center consultation is appropriate.
+<div class="exp-source">Handford C, et al. Emerg Med J. 2014;31(12):1039–1047. McIntosh SE, et al. Wilderness Environ Med. 2011;22(2):156–166.</div>`
       }
     ]
   }
