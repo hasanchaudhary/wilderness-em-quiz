@@ -156,10 +156,10 @@ const QUIZZES = [
         scenario: 'Field stabilization — pesticide exposure',
         text: 'A farm worker is found collapsed near pesticide storage. He is bradycardic (HR 38), has pinpoint pupils, copious secretions dripping from his mouth, and audible wheeze. Which treatment is the most immediately life-saving?',
         choices: [
-          'Pralidoxime (2-PAM) 1 g IV — reactivate acetylcholinesterase before it ages',
-          'Atropine 2–4 mg IV, repeated until secretions dry and bronchospasm resolves',
-          'Activated charcoal via NG tube — prevent further GI absorption',
-          'Lorazepam 2 mg IV — prevent organophosphate-induced seizures'
+          'Pralidoxime (2-PAM) 1 g IV',
+          'Atropine 2–4 mg IV',
+          'Activated charcoal via NG tube',
+          'Lorazepam 2 mg IV'
         ],
         correct: 1,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Atropine is the primary life-saving antidote — titrate to secretions, not heart rate</div>
@@ -173,8 +173,8 @@ Organophosphates inhibit acetylcholinesterase, causing muscarinic excess. The im
         text: 'Four campers are found unconscious in a sealed tent where a propane heater ran all night. Your pulse oximeter reads 97–99% on all four. Your partner says their sats look fine. What is the most important thing to understand about this reading?',
         choices: [
           'A reading above 95% reliably rules out significant carbon monoxide poisoning',
-          'Cold extremities cause falsely low pulse oximetry — warm the hands and recheck',
-          'Pulse oximetry cannot distinguish carboxyhemoglobin from oxyhemoglobin and reads falsely normal in CO poisoning — treat empirically',
+          'Cold extremities cause falsely low pulse oximetry',
+          'Pulse oximetry cannot distinguish carboxyhemoglobin from oxyhemoglobin',
           'The reading confirms oxygenation is adequate; look for another cause of unconsciousness'
         ],
         correct: 2,
@@ -186,12 +186,12 @@ Carboxyhemoglobin (COHb) absorbs light at the same 660 nm wavelength as oxyhemog
         img: 'https://images.pexels.com/photos/263402/pexels-photo-263402.jpeg?auto=compress&cs=tinysrgb&w=800',
         imgFallback: '🚑', imgLabel: 'Emergency medical response at a large outdoor event',
         scenario: 'Music festival — agitated, hypertensive, diaphoretic patient',
-        text: 'A 24-year-old is brought by EMS from a festival: HR 172, BP 204/118, T 39.1°C, extremely agitated and diaphoretic, pupils dilated. Friends confirm stimulant use. The ER physician orders propranolol for his tachycardia and hypertension. Why is this potentially dangerous?',
+        text: 'A 24-year-old is brought by EMS from a festival: HR 172, BP 204/118, T 39.1°C, extremely agitated and diaphoretic, pupils dilated. Friends confirm stimulant use. What is the most appropriate first treatment?',
         choices: [
-          'Propranolol raises the seizure threshold and worsens CNS stimulant toxicity directly',
-          'Beta-blockade removes the beta-mediated vasodilation while alpha-adrenergic stimulation continues — this can worsen hypertension and cause coronary spasm; benzodiazepines are first-line',
-          'Propranolol prolongs the QT interval and is contraindicated with all stimulants',
-          'This is appropriate — propranolol is the drug of choice for cocaine-induced hypertension'
+          'Propranolol IV',
+          'Benzodiazepines IV',
+          'Labetalol IV',
+          'Phentolamine IV'
         ],
         correct: 1,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Beta-blockade in sympathomimetic toxicity → unopposed alpha stimulation → paradoxical hypertension</div>
@@ -204,10 +204,10 @@ In sympathomimetic toxicity (cocaine, methamphetamine), catecholamines activate 
         scenario: 'Admitted patient — fever and involuntary movements after a new antibiotic',
         text: 'A 52-year-old on sertraline is admitted for MRSA cellulitis and started on linezolid. Two days later she has fever (39.2°C), agitation, and diarrhea. On exam, dorsiflexing her ankle causes it to beat rhythmically three times. A consultant calls it "antibiotic fever." What is the correct diagnosis and most important next step?',
         choices: [
-          'Neuroleptic malignant syndrome — stop antipsychotics immediately',
-          'Serotonin syndrome — the ankle clonus is the key finding; stop linezolid and sertraline, give benzodiazepines',
-          'Sepsis from undertreated MRSA — escalate antibiotics and obtain blood cultures',
-          'Antibiotic fever — monitor and continue current treatment'
+          'Neuroleptic malignant syndrome',
+          'Serotonin syndrome',
+          'Sepsis from undertreated MRSA',
+          'Antibiotic fever'
         ],
         correct: 1,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Linezolid is a monoamine oxidase inhibitor — adding it to an SSRI causes serotonin syndrome</div>
@@ -220,10 +220,10 @@ Linezolid inhibits MAO, increasing synaptic serotonin. Combined with any seroton
         scenario: 'Overnight OD — wide-complex ECG and hypotension',
         text: 'A 31-year-old is brought in after taking her entire bottle of amitriptyline. She is obtunded, BP 72/44, HR 136. ECG shows QRS of 148 ms and a prominent R wave in lead aVR. The nurse pushes lidocaine 100 mg IV for "ventricular tachycardia." What is the most appropriate treatment, and why was lidocaine potentially counterproductive?',
         choices: [
-          'Magnesium sulfate 2 g IV — TCA toxicity causes torsades via QT prolongation',
-          'Sodium bicarbonate 1–2 mEq/kg IV — alkalinization narrows QRS and sodium loading overcomes channel blockade; lidocaine adds sodium channel blockade and can worsen conduction',
-          'Synchronized cardioversion — the wide complex is unstable VT requiring immediate electrical therapy',
-          'Calcium gluconate 1 g IV — TCAs block calcium channels causing the wide QRS'
+          'Magnesium sulfate 2 g IV',
+          'Sodium bicarbonate 1–2 mEq/kg IV',
+          'Synchronized cardioversion',
+          'Calcium gluconate 1 g IV'
         ],
         correct: 1,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Sodium bicarbonate is the cornerstone — two mechanisms simultaneously; lidocaine is itself a sodium channel blocker</div>
@@ -247,10 +247,10 @@ TCA toxicity works by: (1) sodium channel blockade → QRS widening, (2) alpha-1
         scenario: 'Beach sting — tentacles still adhered to arm',
         text: 'A swimmer is stung by a jellyfish with visible tentacles still adhered to her forearm. A lifeguard offers to pour fresh water from his bottle over the wound to rinse it off. What is the correct response?',
         choices: [
-          'Accept — fresh water neutralizes the venom and helps remove the tentacles',
-          'Decline — fresh water causes unfired nematocysts to discharge, worsening the sting; use seawater or vinegar instead',
-          'Accept, but immediately follow with a vinegar rinse to neutralize remaining venom',
-          'Pour urine over the wound — its neutral pH makes it ideal for jellyfish stings'
+          'Accept',
+          'Decline',
+          'Accept, then immediately rinse with vinegar',
+          'Pour urine over the wound'
         ],
         correct: 1,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Fresh water (and urine) are hypotonic — they trigger unfired nematocysts to discharge</div>
@@ -263,10 +263,10 @@ Jellyfish tentacles contain thousands of nematocysts that fire when osmotically 
         scenario: 'Backcountry trail — bitten on lower leg, snakebite kit available',
         text: 'A hiker is bitten on the calf by a rattlesnake. His group carries a commercial snakebite kit with a suction device, a razor blade, and constriction bands. Swelling is beginning at the bite site. What is the most important action?',
         choices: [
-          'Apply the suction device immediately — most effective if used within 5 minutes',
+          'Apply the suction device immediately',
           'Make a small incision over the fang marks and apply suction to express the venom',
           'Apply a constriction band just above the bite to limit systemic spread of venom',
-          'Immobilize the extremity at or below heart level, keep the patient calm, and evacuate rapidly — do not use any part of the snakebite kit'
+          'Immobilize the extremity at or below heart level, keep the patient calm, and evacuate rapidly'
         ],
         correct: 3,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">No component of commercial snakebite kits improves outcomes — several cause harm</div>
@@ -279,9 +279,9 @@ Suction devices recover <0.04% of injected venom. Incision causes tissue damage 
         scenario: 'Camping — sudden severe abdominal rigidity after outdoor latrine visit',
         text: 'A 52-year-old woman develops severe cramping abdominal pain, board-like rigidity of the abdomen and thighs, drenching diaphoresis, and BP 192/108 one hour after feeling a sharp pinprick while using an outdoor pit toilet. A surgeon says "This looks like peritonitis — she needs the OR." What is the most important immediate step?',
         choices: [
-          'Proceed to the OR — the degree of abdominal rigidity confirms peritonitis',
+          'Proceed to the OR',
           'Obtain an emergent abdominal CT to evaluate for bowel perforation before surgery',
-          'Carefully inspect the bite site; this presentation is consistent with envenomation causing muscle spasm rather than true peritonitis — treat with IV opioids and benzodiazepines',
+          'Inspect the bite site and reconsider the diagnosis before proceeding to the OR',
           'Give IV antibiotics empirically for suspected intra-abdominal sepsis'
         ],
         correct: 2,
@@ -295,10 +295,10 @@ Black widow venom (alpha-latrotoxin) triggers massive neurotransmitter release, 
         scenario: 'Florida yard — completely asymptomatic at 2 hours post-bite',
         text: 'A 28-year-old is bitten on the finger by a red-yellow-black banded snake in Florida. Two hours later he feels completely well — no pain, no swelling, no neurological symptoms. His wife says there is clearly no venom and no antivenom is needed. What is the correct clinical response?',
         choices: [
-          'Agree — absence of symptoms at 2 hours reliably excludes clinically significant envenomation; discharge with return precautions',
-          'Disagree — coral snake neurotoxicity can be delayed 6–12 hours or longer; admit for observation and discuss early antivenom with toxicology',
-          'Order a serum creatine kinase level — a normal CK confirms a dry bite',
-          'Observe for 1 hour in the ED; if still asymptomatic, discharge is safe'
+          'Discharge with return precautions',
+          'Admit for observation and early antivenom discussion',
+          'Order a serum creatine kinase level to confirm a dry bite',
+          'Observe in the ED for 1 hour, then discharge if asymptomatic'
         ],
         correct: 1,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Coral snake neurotoxicity is frequently delayed — a painless, swelling-free bite is not a dry bite</div>
@@ -311,10 +311,10 @@ The eastern coral snake delivers a postsynaptic neurotoxin that blocks acetylcho
         scenario: 'Arizona — 3-year-old with neurotoxic symptoms after shoe sting',
         text: 'A 3-year-old in Tucson is brought in 1 hour after a sting from a small yellow scorpion found in his shoe. He has uncontrolled crying, roving random eye movements, excessive drooling, and involuntary jerking of all extremities. HR 168, BP 128/90. The attending plans supportive care only and expects spontaneous resolution. What is a critical alternative to consider?',
         choices: [
-          'Ketamine infusion — the involuntary movements represent status epilepticus requiring anesthesia',
-          'IV diphenhydramine — the roving eye movements are an acute dystonic reaction',
-          'Anascorp (centruroides antivenom) IV — FDA-approved; rapidly resolves neurotoxic symptoms within 60 minutes in pediatric bark scorpion envenomation',
-          'Calcium gluconate IV — the muscle jerking is consistent with ionized hypocalcemia'
+          'Ketamine infusion',
+          'IV diphenhydramine',
+          'Anascorp (centruroides antivenom) IV',
+          'Calcium gluconate IV'
         ],
         correct: 2,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Anascorp antivenom rapidly reverses bark scorpion neurotoxicity — young children are at highest risk for respiratory failure</div>
@@ -336,12 +336,12 @@ Arizona bark scorpion (Centruroides sculpturatus) is the only US scorpion capabl
         img: 'https://images.pexels.com/photos/5699514/pexels-photo-5699514.jpeg?auto=compress&cs=tinysrgb&w=800',
         imgFallback: '💊', imgLabel: 'Acetaminophen tablets — most common cause of acute liver failure in the US',
         scenario: 'Intentional ingestion — "feels completely fine" at 7 hours',
-        text: 'A 22-year-old took approximately 9 grams of acetaminophen 7 hours ago. She feels well — only mild nausea. Her APAP level is 165 mcg/mL, above the treatment line on the Rumack-Matthew nomogram. Her liver enzymes are completely normal. A nurse says "She feels fine — skip the NAC." What is the correct response?',
+        text: 'A 22-year-old took approximately 9 grams of acetaminophen 7 hours ago. She feels well — only mild nausea. Her APAP level is 165 mcg/mL, above the treatment line on the Rumack-Matthew nomogram. Her liver enzymes are completely normal. What is the correct next step?',
         choices: [
-          'Agree — asymptomatic patients with normal liver enzymes at 7 hours do not need NAC',
-          'Agree — NAC is only beneficial if started within 4 hours of ingestion',
-          'Disagree — the nomogram level is the indication; liver damage peaks at 72–96 hours and enzymes are routinely normal in the first 12–24 hours even in severe overdose',
-          'Agree — start NAC only if the repeat level at 12 hours is also above the treatment line'
+          'Observe and recheck liver enzymes at 12 hours before deciding on treatment',
+          'NAC is no longer effective this late in the ingestion',
+          'Start NAC now',
+          'Confirm with a repeat APAP level at 12 hours first'
         ],
         correct: 2,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Asymptomatic + normal enzymes at 7 hours means nothing — hepatotoxicity peaks at 72–96 hours</div>
@@ -352,12 +352,12 @@ Acetaminophen toxicity evolves in four stages — LFTs are typically completely 
         img: 'https://images.pexels.com/photos/5722163/pexels-photo-5722163.jpeg?auto=compress&cs=tinysrgb&w=800',
         imgFallback: '💉', imgLabel: 'Emergency clinician — opioid reversal and re-sedation management',
         scenario: 'EMS handoff — unresponsive again 40 minutes after reversal',
-        text: 'Paramedics give naloxone 0.4 mg IM to a patient found unresponsive with a fentanyl patch on his chest. He wakes up and is speaking. Forty minutes later in the ambulance, he becomes unresponsive again. A medic says "Naloxone does not work for fentanyl — he must have taken something else." Is this correct?',
+        text: 'Paramedics give naloxone 0.4 mg IM to a patient found unresponsive with a fentanyl patch on his chest. He wakes up and is speaking. Forty minutes later he becomes unresponsive again. What is the most likely explanation and correct management?',
         choices: [
-          'Correct — naloxone does not reverse synthetic opioids like fentanyl',
-          'Incorrect — naloxone reverses all opioids, but its duration (30–90 min) is shorter than fentanyl absorption from the patch; re-dose or start a naloxone infusion',
-          'Correct — re-sedation after naloxone means the patient has aspirated; prioritize airway management over repeat dosing',
-          'Incorrect — re-sedation means the first dose was underpowered; give 2 mg IV once and monitor'
+          'He co-ingested a second drug',
+          'Naloxone\'s short duration allowed re-narcotization',
+          'He has aspirated',
+          'The initial dose was insufficient'
         ],
         correct: 1,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Naloxone reverses ALL opioids — re-sedation is expected when the opioid outlasts the antidote</div>
@@ -371,7 +371,7 @@ Naloxone competitively antagonizes mu-opioid receptors and reverses all opioids 
         text: 'A 58-year-old taking diazepam 20 mg/day for a decade is brought in sedated after accidentally taking extra pills. He is breathing adequately (RR 13, SpO₂ 97% on room air). A nurse recommends giving flumazenil IV to wake him up for assessment. What is the most important reason to avoid this?',
         choices: [
           'Flumazenil does not reverse benzodiazepines taken more than 2 hours prior',
-          'Flumazenil reversal can precipitate acute benzodiazepine withdrawal seizures in a chronically dependent patient — these may be severe and refractory',
+          'Flumazenil can precipitate withdrawal seizures in a chronically dependent patient',
           'Flumazenil causes respiratory depression and would worsen his breathing',
           'Flumazenil is only approved for procedural sedation reversal, not overdose'
         ],
@@ -386,10 +386,10 @@ Flumazenil is a benzodiazepine receptor antagonist. In a patient with chronic de
         scenario: 'House fire — lactic acidosis and shock unresponsive to fluids',
         text: 'A firefighter rescued from a burning building is obtunded, BP 74/48 despite 2L IV fluids, with severe lactic acidosis (lactate 14 mmol/L). Both CO and cyanide poisoning from burning synthetic materials are suspected. The team has both hydroxocobalamin (Cyanokit) and sodium nitrite available. Which is the safer empirical choice?',
         choices: [
-          'Sodium nitrite — it is the established first-line antidote for cyanide poisoning',
-          'Both together — combining agents produces synergistic cyanide neutralization',
-          'Hydroxocobalamin — it scavenges cyanide directly without inducing methemoglobinemia, making it safe even with CO co-exposure',
-          'Neither — antidotes are contraindicated until blood cyanide levels confirm toxicity'
+          'Sodium nitrite',
+          'Both together',
+          'Hydroxocobalamin',
+          'Neither'
         ],
         correct: 2,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Sodium nitrite creates methemoglobin — lethal when CO is already reducing oxygen-carrying capacity</div>
@@ -402,10 +402,10 @@ Sodium nitrite works by deliberately inducing methemoglobinemia, which scavenges
         scenario: 'Refractory cardiogenic shock — calcium channel blocker overdose',
         text: 'A 72-year-old on diltiazem for AFib accidentally takes 3 days of her extended-release prescription. She arrives 4 hours later: BP 58/32, HR 26 (junctional), confused. She received calcium gluconate, atropine, glucagon, and dopamine — she remains in cardiogenic shock. What is the next most strongly evidence-supported treatment?',
         choices: [
-          'Epinephrine infusion — the most potent vasopressor and inotrope available',
-          'High-dose insulin euglycemia therapy (HIET) — 1 unit/kg IV bolus, then 0.5–1 unit/kg/hr infusion with glucose replacement',
-          'Magnesium 2 g IV — CCBs deplete magnesium, worsening cardiac conduction',
-          'Sodium bicarbonate 2 mEq/kg — alkalinization overcomes calcium channel blockade'
+          'Epinephrine infusion',
+          'High-dose insulin euglycemia therapy (HIET)',
+          'Magnesium 2 g IV',
+          'Sodium bicarbonate 2 mEq/kg'
         ],
         correct: 1,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">HIET is the cornerstone of refractory CCB toxicity — high-dose insulin is a positive inotrope via separate mechanisms</div>
@@ -430,9 +430,9 @@ During CCB toxicity, cardiac myocytes are metabolically stressed. High-dose insu
         text: 'A family of four who foraged wild mushrooms develops severe nausea and vomiting beginning 10 hours after eating. By day 2 they feel much better. On day 3, two family members develop jaundice and right upper quadrant pain. Which feature of this timeline is the most critical diagnostic clue?',
         choices: [
           'The severity of the initial vomiting predicts which family members will develop liver failure',
-          'The delayed onset of GI symptoms (greater than 6 hours after eating) strongly suggests amatoxin-containing species — the clinical improvement on day 2 is deceptive, not reassuring',
-          'The improvement on day 2 confirms the toxin has been eliminated — only supportive care is needed going forward',
-          'Only two of four members developing liver injury means the mushroom was non-toxic — this is likely viral gastroenteritis'
+          'The delayed onset of GI symptoms (greater than 6 hours after eating)',
+          'The improvement on day 2 confirms the toxin has been eliminated',
+          'Only two of four members developing liver injury means the mushroom was non-toxic'
         ],
         correct: 1,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Delayed onset (>6 hours) + false recovery = Amanita phalloides pattern — do not be reassured by day 2 improvement</div>
@@ -445,10 +445,10 @@ The >6-hour delay before any GI symptoms is the single most important distinguis
         scenario: 'Streamside foraging — violent seizures in a child not responding to first-line treatment',
         text: 'A 9-year-old eats the root of a plant he digs up along a stream, thinking it is wild parsnip. Within 30 minutes he has a violent, generalized tonic-clonic seizure. It does not stop after IV lorazepam 0.1 mg/kg. Which plant is most consistent with this presentation, and what does the refractoriness imply?',
         choices: [
-          'Pokeweed — causes GI toxicity; CNS depression is rare with root ingestion',
-          'Water hemlock (Cicuta maculata) — the most violently toxic plant in North America; its toxin causes GABA antagonism and seizures that frequently require multiple large doses of benzodiazepines or barbiturates to control',
-          'Death camas — contains alkaloids that cause bradycardia and hypotension, not seizures',
-          'Amanita mushroom — amatoxin poisoning presents with seizures and delayed liver failure'
+          'Pokeweed',
+          'Water hemlock (Cicuta maculata)',
+          'Death camas',
+          'Amanita mushroom'
         ],
         correct: 1,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Water hemlock causes GABA antagonism — expect refractory seizures requiring very high benzo doses</div>
@@ -461,10 +461,10 @@ Water hemlock (Cicuta maculata) is considered the most violently toxic plant nat
         scenario: 'Summer field party — teen with agitation and urinary retention',
         text: 'A 15-year-old is found at a field party: HR 158, T 38.9°C, skin completely dry and flushed, pupils 10 mm, urinary retention, and actively hallucinating "animals on the walls." Friends say he was eating seeds from a plant with white trumpet-shaped flowers. What is the most appropriate initial management?',
         choices: [
-          'Naloxone 0.4 mg IV — the hallucinations suggest opioid-induced delirium',
-          'Haloperidol 5 mg IM — effective and safe for acute agitation from any cause',
-          'Benzodiazepines for agitation and cooling measures; consider physostigmine in consultation with toxicology or poison control',
-          'Activated charcoal is the priority — this is a GI decontamination emergency'
+          'Naloxone 0.4 mg IV',
+          'Haloperidol 5 mg IM',
+          'Benzodiazepines and active cooling',
+          'Activated charcoal is the priority'
         ],
         correct: 2,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Jimsonweed (Datura) causes pure anticholinergic toxidrome — benzodiazepines are first-line; avoid haloperidol</div>
@@ -477,10 +477,10 @@ Datura stramonium seeds contain tropane alkaloids (atropine, scopolamine, hyoscy
         scenario: 'Backyard garden — bradycardia and yellow vision, no cardiac medications',
         text: 'A 70-year-old woman ate leaves from her garden ornamental shrub (later identified as oleander). She presents with HR 36 (junctional rhythm), nausea, yellow-green visual disturbances, and K⁺ of 6.4 mEq/L. Her serum digoxin level returns at 3.1 ng/mL, but she insists she takes no heart medications. What is the best explanation, and what is the correct treatment?',
         choices: [
-          'She is concealing digoxin use — treat with temporary pacing for the bradycardia',
-          'Oleander cardiac glycosides cross-react with the standard digoxin immunoassay; this represents oleander toxicity, not digoxin; the correct treatment is digoxin-specific Fab fragments',
-          'The lab result is a contamination error — repeat the assay before treating',
-          'The elevated potassium is the primary problem; give calcium gluconate and sodium polystyrene sulfonate'
+          'She is concealing digoxin use',
+          'Oleander glycosides cross-react with the digoxin immunoassay',
+          'The lab result is a contamination error',
+          'The elevated potassium is the primary problem'
         ],
         correct: 1,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Plant cardiac glycosides cross-react with digoxin immunoassays — Digoxin Fab treats toxicity from ANY glycoside source</div>
@@ -493,10 +493,10 @@ Oleander contains oleandrin and neriine — cardiac glycosides that cause the sa
         scenario: 'Traditional herbal remedy — arrhythmia with burning paresthesias unresponsive to antiarrhythmics',
         text: 'A 44-year-old takes an aconite root preparation for joint pain. Minutes after ingestion he develops intense burning and tingling of the mouth and hands, then hemodynamically unstable wide-complex ventricular tachycardia. IV amiodarone 300 mg and lidocaine 100 mg are both given without effect. What should be understood about this arrhythmia?',
         choices: [
-          'The arrhythmia is from hyperkalemia caused by aconitine — calcium gluconate is the correct treatment',
-          'Aconitine persistently activates voltage-gated sodium channels — standard antiarrhythmics frequently fail; electrical cardioversion and potentially ECMO may be required',
-          'Aconitine is a cholinomimetic — atropine and pralidoxime should be used before electrical therapy',
-          'The arrhythmia will self-terminate within 2 hours as aconitine is eliminated — supportive care only'
+          'The arrhythmia is from hyperkalemia caused by aconitine',
+          'Aconitine persistently activates voltage-gated sodium channels',
+          'Aconitine is a cholinomimetic',
+          'The arrhythmia will self-terminate within 2 hours as aconitine is eliminated'
         ],
         correct: 1,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Aconitine locks sodium channels open — antiarrhythmic drugs often fail; electricity and ECMO may be necessary</div>
@@ -520,9 +520,9 @@ Aconitine (from Aconitum species — monkshood, wolfsbane) persistently activate
         scenario: 'Endurance race — runner down with high temp and confusion',
         text: 'A 34-year-old marathon runner collapses and is brought to the medical tent confused, unable to follow commands, and ataxic. Temperature is 41.4°C (106.5°F), HR 136, BP 102/68. He is diaphoretic. Race medics plan to start a saline drip and wait for an ambulance to transport to the hospital for cooling. What is the most important correction to this plan?',
         choices: [
-          'This plan is correct — IV fluids should be started before cooling to prevent hypotension during vasoconstriction',
-          'Cooling should begin immediately in the field — "cool first, transport second"; do not delay for IV access or transport',
-          'Field cooling is contraindicated — it may cause overcooling; only hospital-based equipment is safe',
+          'This plan is correct',
+          'Cooling should begin immediately in the field',
+          'Field cooling is contraindicated',
           'Dexamethasone should be given first to reduce cerebral edema before cooling'
         ],
         correct: 1,
@@ -536,10 +536,10 @@ Heat stroke is defined by hyperthermia + neurological dysfunction. It is a time-
         scenario: 'Mountain rescue — cold, pulseless, appears dead',
         text: 'Rescuers find a hiker collapsed after avalanche burial, unresponsive, not breathing, no palpable pulse. Core temperature is 24°C (75°F). A rescuer says "He is dead — 45 minutes buried and no pulse." What is the most important principle guiding the resuscitation decision?',
         choices: [
-          'At core temperatures below 28°C, cardiac resuscitation is not indicated — arrest is irreversible at this depth of hypothermia',
-          'Declare death based on the burial duration — more than 35 minutes of avalanche burial is not survivable',
-          'Do not attempt resuscitation — scene safety cannot be guaranteed for ongoing rescue efforts',
-          'Do not declare death until the patient is rewarmed to near-normal core temperature — hypothermic cardiac arrest is potentially reversible; begin CPR and aggressive rewarming'
+          'At core temperatures below 28°C, cardiac resuscitation is not indicated',
+          'Declare death based on the burial duration',
+          'Do not attempt resuscitation',
+          'Do not declare death until the patient is rewarmed to near-normal core temperature'
         ],
         correct: 3,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">"No one is dead until they are warm and dead" — full neurological recovery has occurred after core temps as low as 13.7°C</div>
@@ -552,10 +552,10 @@ Profound hypothermia slows metabolism dramatically, providing significant cerebr
         scenario: 'High-altitude trek — headache progresses to ataxia and confusion',
         text: 'A 28-year-old trekker reaches 4,400 m (14,400 ft). Over 3 days she develops progressive headache and nausea. On day 4 she cannot walk a straight line and appears confused. She has been taking ibuprofen with minimal relief. What is the most important immediate intervention?',
         choices: [
-          'Continue ascending slowly — altitude illness typically resolves with acclimatization over 24 hours',
+          'Continue ascending slowly',
           'Give supplemental oxygen and observe for 24 hours before deciding on descent',
-          'Immediate descent of at least 300–500 m plus dexamethasone 8 mg — ataxia and altered consciousness define high altitude cerebral edema, a life-threatening emergency',
-          'Increase ibuprofen dosing and add acetazolamide 250 mg — maximize pharmacological management before committing to descent'
+          'Immediate descent of at least 300–500 m plus dexamethasone 8 mg',
+          'Increase ibuprofen dosing and add acetazolamide 250 mg'
         ],
         correct: 2,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">HACE = immediate descent — ataxia and altered consciousness are the critical warning signs</div>
@@ -568,10 +568,10 @@ High altitude cerebral edema (HACE) represents the dangerous end of the altitude
         scenario: 'Cold lake submersion — child in cardiac arrest, paramedic calls the code',
         text: 'A 5-year-old is pulled from a 4°C lake after an estimated 20-minute submersion. She is pulseless, apneic, with a core temperature of 27°C. CPR has been ongoing for 8 minutes with no return of spontaneous circulation. The paramedic supervisor recommends calling the code. What is the most appropriate response?',
         choices: [
-          'Agree — submersion longer than 10 minutes in any water temperature is not survivable',
-          'Agree — absence of ROSC after 8 minutes of CPR in a child indicates non-survivable injury',
-          'Disagree — cold water submersion with hypothermia is one of the rare scenarios where prolonged cardiac arrest may be fully reversible; continue CPR and transport to an ECMO-capable center',
-          'Disagree — give 3 doses of epinephrine IV; if still no response, declare death'
+          'Stop — submersion longer than 10 minutes is non-survivable in any temperature',
+          'Stop — 8 minutes without ROSC indicates futility in pediatric arrest',
+          'Continue CPR and transport immediately to an ECMO-capable center',
+          'Give 3 rounds of epinephrine IV; if no ROSC after that, declare death'
         ],
         correct: 2,
         explanation: `<div style="font-weight:700;margin-bottom:.4rem">Cold water + child = do not stop — ECMO rewarming has produced full neurological recovery after 60+ minutes of arrest</div>
@@ -584,9 +584,9 @@ Hypothermic cardiac arrest from cold-water submersion in children is one of the 
         scenario: 'Multiple lightning strike victims — standard triage contradicts best practice',
         text: 'Five people are simultaneously struck by lightning at an outdoor event. Two are pulseless and apneic. Three are walking around dazed and confused. Standard mass casualty triage would classify the pulseless patients as "expectant" (black tag) and direct resources to the survivors. Why does lightning strike invert this principle?',
         choices: [
-          'Standard triage applies — always allocate resources to patients with the highest probability of survival',
-          'Lightning victims who survive the initial arrest have hearts that responded to the electrical shock; those who are pulseless have structurally normal hearts arrested by an electrical mechanism — they respond well to standard ACLS and should be prioritized',
-          'Lightning causes traumatic cardiac contusion that is irreversible — standard triage correctly deprioritizes pulseless victims',
+          'Standard triage applies',
+          'Pulseless lightning victims should be resuscitated before the walking wounded',
+          'Lightning causes traumatic cardiac contusion that is irreversible',
           'Triage inversion only applies when a defibrillator is immediately available on scene'
         ],
         correct: 1,
